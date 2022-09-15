@@ -15,7 +15,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:            "BL Replay Studio",
+		Title:            "BL Replay Analyzer",
 		Width:            1024,
 		Height:           768,
 		MinWidth:         800,
