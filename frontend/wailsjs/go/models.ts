@@ -1,3 +1,64 @@
+export namespace buffer {
+	
+	export class Stats[uint16] {
+	    min: number;
+	    avg: number;
+	    med: number;
+	    max: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Stats[uint16](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
+	    }
+	}
+	export class Stats[float64] {
+	    min: number;
+	    avg: number;
+	    med: number;
+	    max: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Stats[float64](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
+	    }
+	}
+	export class StatsSlice[uint16] {
+	    min: number[];
+	    avg: number[];
+	    med: number[];
+	    max: number[];
+	    count: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsSlice[uint16](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
+	        this.count = source["count"];
+	    }
+	}
+
+}
+
 export namespace main {
 	
 	export class ReplayItem {
@@ -461,67 +522,6 @@ export namespace bsor {
 		}
 	}
 	
-
-}
-
-export namespace buffer {
-	
-	export class Stats[uint16] {
-	    min: number;
-	    avg: number;
-	    med: number;
-	    max: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new Stats[uint16](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
-	    }
-	}
-	export class Stats[float64] {
-	    min: number;
-	    avg: number;
-	    med: number;
-	    max: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new Stats[float64](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
-	    }
-	}
-	export class StatsSlice[uint16] {
-	    min: number[];
-	    avg: number[];
-	    med: number[];
-	    max: number[];
-	    count: number[];
-	
-	    static createFrom(source: any = {}) {
-	        return new StatsSlice[uint16](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
-	        this.count = source["count"];
-	    }
-	}
 
 }
 
