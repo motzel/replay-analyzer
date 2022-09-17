@@ -1,30 +1,25 @@
 <script>
     import replaysStore from '../../stores/replays.js'
+    import Replay from "../replay/Replay.svelte";
 </script>
 
-<a href="/">Back to index</a>
-
-{#if $replaysStore?.length}
-    <section>
-        <h1>TODO: Replays view</h1>
-
-        {#each $replaysStore as replay}
-            <div class="replay">
-                <div>Filename: {replay?.filename}</div>
-                <div>Song name: {replay?.info?.songName}</div>
-                <div>Difficulty: {replay?.info?.difficulty}</div>
-                <div>Accuracy: {replay?.info.accuracy}</div>
-                <div>FC Accuracy: {replay?.info.fcAccuracy}</div>
-            </div>
-        {/each}
-    </section>
-{:else}
-    <p>No replays.</p>
-{/if}
+<section>
+    {#if $replaysStore?.length}
+        <section class="replays">
+            {#each $replaysStore as replay}
+                <Replay {replay} />
+            {/each}
+        </section>
+    {:else}
+        <p>No replays.</p>
+    {/if}
+</section>
 
 <style>
-.replay {
-    padding: .5rem 0;
-    border-bottom: 1px solid var(--sl-color-neutral-300);
-}
+    section.replays {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr) );
+        grid-column-gap: 1rem;
+        grid-row-gap: 1.5rem;
+    }
 </style>

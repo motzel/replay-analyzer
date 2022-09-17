@@ -4,15 +4,21 @@
 }
 
 :root, :host, .sl-theme-light {
-    --sl-color-neutral-0: rgba(238, 238, 238, 1);
+    --color-background: rgba(238, 238, 238, 1);
+    --color-nav: rgba(220, 220, 220, 1);
 }
 
 :host, .sl-theme-dark {
-    --sl-color-neutral-0: rgba(27, 38, 54, 1);
+    --color-background: rgba(27, 38, 54, 1);
+    --color-nav: rgba(22, 31, 44, 1);
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
 }
 
 html {
-    background-color: rgba(27, 38, 54, 1);
+    background-color: var(--color-background);
     text-align: center;
     color: white;
 }
@@ -25,9 +31,11 @@ body {
     font-size: var(--sl-font-size-medium);
     font-weight: var(--sl-font-weight-normal);
     letter-spacing: var(--sl-letter-spacing-normal);
-    background-color: var(--sl-color-neutral-0);
+    background-color: var(--color-background);
     color: var(--sl-color-neutral-900);
     line-height: var(--sl-line-height-normal);
+    height: 100vh;
+    overflow-y: hidden;
 }
 
 @font-face {

@@ -19,7 +19,7 @@ store = (() => {
     const reindex = async (dir = `.\\Replays`) => {
         IndexReplays(dir)
             .then(data => {
-                replays = data?.filter(r => !r.error) ?? []
+                replays = (data?.filter(r => !r.error) ?? []).sort((a, b) => b?.info?.timeSet?.localeCompare(a?.info?.timeSet))
                 failed = data?.filter(r => r.error) ?? []
                 error = null
 

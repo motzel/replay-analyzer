@@ -34,7 +34,7 @@
         Total: {total}, Ok: {okCount}, Failed: {failedCount}
     </div>
 
-    <sl-button variant="primary" outline size="large" on:click={() => router.goto('/replays')}>
+    <sl-button variant="primary" outline pill size="large" on:click={() => router.goto('/replays')}>
         <sl-icon slot="prefix" name="graph-up-arrow"></sl-icon>
         Lessgo!
     </sl-button>
