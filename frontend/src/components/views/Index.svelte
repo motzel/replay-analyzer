@@ -1,59 +1,43 @@
 <script>
     import {onMount} from "svelte";
     import {router} from 'tinro';
-    import {EventsOn} from "../../../wailsjs/runtime/runtime.js";
-    import {GetCwd, IndexReplays, LoadReplay} from '../../../wailsjs/go/main/App.js'
-
-    let replays
-    let okCount = 0
-    let failed = []
-
-    let error
+    import replaysStore from '../../stores/replays.js'
+    import {GetCwd} from '../../../wailsjs/go/main/App.js'
 
     let currentDir
-    let progress = null
-
-    EventsOn('indexing', function (data) {
-        progress = data
-    })
 
     onMount(async () => {
         currentDir = await GetCwd()
 
-        IndexReplays(`.\\Replays`)
-            .then(replaysData => {
-                replays = replaysData
-
-                failed = replaysData?.filter(r => r.error) ?? []
-                okCount = (replaysData?.length ?? 0) - failed.length
-            })
-            .catch(err => error = err)
-
-
-        // LoadReplay('.\\Replays\\test.bsor')
-        //     .then(r => replays = r)
-        //     .catch(err => error = err)
+        await replaysStore.reindex(`.\\Replays`)
     })
+
+    $: failedStore = replaysStore.failedStore
+    $: errorStore = replaysStore.errorStore
+    $: progressStore = replaysStore.progressStore
+    $: okCount = $replaysStore?.length ?? 0
+    $: failedCount = $failedStore?.length ?? 0
+    $: total = okCount + failedCount
 </script>
 
-{#if replays}
+{#if $progressStore}
+    <div><small>Indexing replay files...</small></div>
+    <progress value={$progressStore.count} max={$progressStore.length}></progress>
+    <div class="progress-file">
+        <small>{$progressStore.processedFiles.length ? $progressStore.processedFiles[$progressStore.processedFiles.length - 1] : ''}</small>
+    </div>
+{:else if $errorStore}
+    <div class="error">{$errorStore}</div>
+{:else if $replaysStore}
     <h2>All replays indexed</h2>
     <div class="results">
-        Total: {replays?.length ?? 0}, Ok: {okCount}, Failed: {failed?.length ?? 0}
+        Total: {total}, Ok: {okCount}, Failed: {failedCount}
     </div>
 
     <sl-button variant="primary" outline size="large" on:click={() => router.goto('/replays')}>
         <sl-icon slot="prefix" name="graph-up-arrow"></sl-icon>
         Lessgo!
     </sl-button>
-{:else if error}
-    <div class="error">{error}</div>
-{:else if progress}
-    <div><small>Indexing replay files...</small></div>
-    <progress value={progress.count} max={progress.length}></progress>
-    <div class="progress-file">
-        <small>{progress.processedFiles.length ? progress.processedFiles[progress.processedFiles.length - 1] : ''}</small>
-    </div>
 {:else}
     <p><small>Initializing...</small></p>
 {/if}

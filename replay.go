@@ -157,5 +157,7 @@ func (app *App) IndexReplays(dir string) ([]ReplayItem, error) {
 
 	<-done
 
+	runtime2.EventsEmit(app.ctx, "indexing", nil)
+
 	return bsorFiles, nil
 }
