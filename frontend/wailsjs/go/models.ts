@@ -1,64 +1,3 @@
-export namespace buffer {
-	
-	export class Stats[uint16] {
-	    min: number;
-	    avg: number;
-	    med: number;
-	    max: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new Stats[uint16](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
-	    }
-	}
-	export class Stats[float64] {
-	    min: number;
-	    avg: number;
-	    med: number;
-	    max: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new Stats[float64](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
-	    }
-	}
-	export class StatsSlice[uint16] {
-	    min: number[];
-	    avg: number[];
-	    med: number[];
-	    max: number[];
-	    count: number[];
-	
-	    static createFrom(source: any = {}) {
-	        return new StatsSlice[uint16](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
-	        this.count = source["count"];
-	    }
-	}
-
-}
-
 export namespace main {
 	
 	export class ReplayItem {
@@ -102,95 +41,6 @@ export namespace main {
 
 export namespace bsor {
 	
-	export class ReplayEventsInfo {
-	    modVersion: string;
-	    gameVersion: string;
-	    // Go type: time.Time
-	    timeSet: any;
-	    playerId: string;
-	    playerName: string;
-	    platform: string;
-	    trackingSystem: string;
-	    hmd: string;
-	    controller: string;
-	    hash: string;
-	    songName: string;
-	    mapper: string;
-	    difficulty: string;
-	    score: number;
-	    mode: string;
-	    environment: string;
-	    modifiers: string[];
-	    jumpDistance: number;
-	    leftHanded: boolean;
-	    height: number;
-	    startTime: number;
-	    failTime: number;
-	    speed: number;
-	    endTime: number;
-	    accuracy: number;
-	    fcAccuracy: number;
-	    calcScore: number;
-	    maxCombo: number;
-	    maxLeftCombo: number;
-	    maxRightCombo: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new ReplayEventsInfo(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.modVersion = source["modVersion"];
-	        this.gameVersion = source["gameVersion"];
-	        this.timeSet = this.convertValues(source["timeSet"], null);
-	        this.playerId = source["playerId"];
-	        this.playerName = source["playerName"];
-	        this.platform = source["platform"];
-	        this.trackingSystem = source["trackingSystem"];
-	        this.hmd = source["hmd"];
-	        this.controller = source["controller"];
-	        this.hash = source["hash"];
-	        this.songName = source["songName"];
-	        this.mapper = source["mapper"];
-	        this.difficulty = source["difficulty"];
-	        this.score = source["score"];
-	        this.mode = source["mode"];
-	        this.environment = source["environment"];
-	        this.modifiers = source["modifiers"];
-	        this.jumpDistance = source["jumpDistance"];
-	        this.leftHanded = source["leftHanded"];
-	        this.height = source["height"];
-	        this.startTime = source["startTime"];
-	        this.failTime = source["failTime"];
-	        this.speed = source["speed"];
-	        this.endTime = source["endTime"];
-	        this.accuracy = source["accuracy"];
-	        this.fcAccuracy = source["fcAccuracy"];
-	        this.calcScore = source["calcScore"];
-	        this.maxCombo = source["maxCombo"];
-	        this.maxLeftCombo = source["maxLeftCombo"];
-	        this.maxRightCombo = source["maxRightCombo"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
 	export class HandStat {
 	    accCut: buffer.Stats[uint16];
 	    beforeCut: buffer.Stats[uint16];
@@ -477,6 +327,95 @@ export namespace bsor {
 	        this.accCut = source["accCut"];
 	    }
 	}
+	export class ReplayEventsInfo {
+	    modVersion: string;
+	    gameVersion: string;
+	    // Go type: time.Time
+	    timeSet: any;
+	    playerId: string;
+	    playerName: string;
+	    platform: string;
+	    trackingSystem: string;
+	    hmd: string;
+	    controller: string;
+	    hash: string;
+	    songName: string;
+	    mapper: string;
+	    difficulty: string;
+	    score: number;
+	    mode: string;
+	    environment: string;
+	    modifiers: string[];
+	    jumpDistance: number;
+	    leftHanded: boolean;
+	    height: number;
+	    startTime: number;
+	    failTime: number;
+	    speed: number;
+	    endTime: number;
+	    accuracy: number;
+	    fcAccuracy: number;
+	    calcScore: number;
+	    maxCombo: number;
+	    maxLeftCombo: number;
+	    maxRightCombo: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReplayEventsInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.modVersion = source["modVersion"];
+	        this.gameVersion = source["gameVersion"];
+	        this.timeSet = this.convertValues(source["timeSet"], null);
+	        this.playerId = source["playerId"];
+	        this.playerName = source["playerName"];
+	        this.platform = source["platform"];
+	        this.trackingSystem = source["trackingSystem"];
+	        this.hmd = source["hmd"];
+	        this.controller = source["controller"];
+	        this.hash = source["hash"];
+	        this.songName = source["songName"];
+	        this.mapper = source["mapper"];
+	        this.difficulty = source["difficulty"];
+	        this.score = source["score"];
+	        this.mode = source["mode"];
+	        this.environment = source["environment"];
+	        this.modifiers = source["modifiers"];
+	        this.jumpDistance = source["jumpDistance"];
+	        this.leftHanded = source["leftHanded"];
+	        this.height = source["height"];
+	        this.startTime = source["startTime"];
+	        this.failTime = source["failTime"];
+	        this.speed = source["speed"];
+	        this.endTime = source["endTime"];
+	        this.accuracy = source["accuracy"];
+	        this.fcAccuracy = source["fcAccuracy"];
+	        this.calcScore = source["calcScore"];
+	        this.maxCombo = source["maxCombo"];
+	        this.maxLeftCombo = source["maxLeftCombo"];
+	        this.maxRightCombo = source["maxRightCombo"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class ReplayEventsWithStats {
 	    info: ReplayEventsInfo;
 	    notes: GoodNoteCutEvent[];
@@ -522,6 +461,68 @@ export namespace bsor {
 		}
 	}
 	
+	
+
+}
+
+export namespace buffer {
+	
+	export class Stats[uint16] {
+	    min: number;
+	    avg: number;
+	    med: number;
+	    max: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Stats[uint16](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
+	    }
+	}
+	export class Stats[float64] {
+	    min: number;
+	    avg: number;
+	    med: number;
+	    max: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Stats[float64](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
+	    }
+	}
+	export class StatsSlice[uint16] {
+	    min: number[];
+	    avg: number[];
+	    med: number[];
+	    max: number[];
+	    count: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsSlice[uint16](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
+	        this.count = source["count"];
+	    }
+	}
 
 }
 

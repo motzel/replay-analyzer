@@ -1,3 +1,8 @@
+:root {
+    --blue-saber: #2064a8;
+    --red-saber: #ff0000;
+}
+
 :root, :host, .sl-theme-light {
     --sl-color-neutral-0: rgba(238, 238, 238, 1);
 }

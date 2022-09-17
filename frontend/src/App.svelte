@@ -1,13 +1,17 @@
 <script>
     import {onMount} from "svelte";
+    import {Route, router} from 'tinro';
     import {setBasePath} from '@shoelace-style/shoelace/dist/utilities/base-path';
-    import ThemePicker from "./components/common/ThemePicker.svelte";
-    import Index from "./components/pages/Index.svelte";
-    import Splash from "./components/pages/Splash.svelte";
+    import Nav from "./components/common/Nav.svelte";
+    import Splash from "./components/views/Splash.svelte";
+    import Index from "./components/views/Index.svelte";
+    import Replays from "./components/views/Replays.svelte";
 
     let initialized = false;
 
     setBasePath('/src/assets/shoelace/');
+
+    router.mode.memory();
 
     async function initShoelace() {
         return Promise.all([
@@ -28,13 +32,20 @@
     })
 </script>
 
-<ThemePicker/>
-
-<Splash>
-    {#if initialized}
-        <Index/>
-    {:else}
+{#if !initialized}
+    <Splash>
         <p><small>Initializing...</small></p>
-    {/if}
-</Splash>
+    </Splash>
+{:else}
+    <Nav/>
 
+    <Route path="/">
+        <Splash>
+            <Index/>
+        </Splash>
+    </Route>
+
+    <Route path="/replays">
+        <Replays />
+    </Route>
+{/if}

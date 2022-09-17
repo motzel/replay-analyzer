@@ -4,7 +4,6 @@
 
 <main>
     <img alt="App logo" id="logo" src="{logo}">
-
     <h1>Beat Leader<br/>Replay Analyzer</h1>
 
     <slot>
@@ -22,7 +21,7 @@
     }
 
     img {
-        height: 50%;
+        max-height: min(25rem, 50%)
     }
 
     h1 {

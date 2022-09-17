@@ -1,5 +1,6 @@
 <script>
     import {onMount} from "svelte";
+    import {router} from 'tinro';
     import {EventsOn} from "../../../wailsjs/runtime/runtime.js";
     import {GetCwd, IndexReplays, LoadReplay} from '../../../wailsjs/go/main/App.js'
 
@@ -41,7 +42,7 @@
         Total: {replays?.length ?? 0}, Ok: {okCount}, Failed: {failed?.length ?? 0}
     </div>
 
-    <sl-button variant="primary" outline size="large">
+    <sl-button variant="primary" outline size="large" on:click={() => router.goto('/replays')}>
         <sl-icon slot="prefix" name="graph-up-arrow"></sl-icon>
         Lessgo!
     </sl-button>
