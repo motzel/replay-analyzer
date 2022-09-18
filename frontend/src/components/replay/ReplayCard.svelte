@@ -5,6 +5,9 @@
     import Date from "../common/Date.svelte";
 
     export let replay
+    export let hash = ''
+
+    $: replayUrl = `/replays/${replay?.filename}#${hash}`
 </script>
 
 {#if replay}
@@ -12,7 +15,7 @@
         <div slot="image">
             <div class="bg-image"
                  style:background-image={`url(https://eu.cdn.beatsaver.com/${replay?.info?.hash?.toLowerCase()}.jpg)`}
-                 on:click={() => router.goto(`/replays/${replay?.filename}`)}
+                 on:click={() => router.goto(replayUrl)}
             >
                 <div class="line">
                     <span></span>
@@ -47,7 +50,7 @@
                 <Date date={replay?.info?.timeSet} sync={true} />
             </small>
             <sl-button variant="primary" size="small" pill
-                       on:click={() => router.goto(`/replays/${replay?.filename}`)}>
+                       on:click={() => router.goto(replayUrl)}>
                 Analyze
             </sl-button>
         </div>

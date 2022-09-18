@@ -2,7 +2,6 @@
     import {onMount} from "svelte";
     import {Route, router} from 'tinro';
     import {setBasePath} from '@shoelace-style/shoelace/dist/utilities/base-path';
-    import Nav from "./components/common/Nav.svelte";
     import Splash from "./components/views/Splash.svelte";
     import Index from "./components/views/Index.svelte";
     import Replays from "./components/views/Replays.svelte";
@@ -53,14 +52,14 @@
 
     <Route path="/replays/*">
         <Route path="/">
-            <Layout>
-                <Replays/>
+            <Layout let:scroll let:setScroll>
+                <Replays {scroll} {setScroll}/>
             </Layout>
         </Route>
 
         <Route path="/:filename" let:meta>
             <Layout>
-                <Replay filename={meta.params.filename}/>
+                <Replay filename={meta.params.filename} />
             </Layout>
         </Route>
     </Route>

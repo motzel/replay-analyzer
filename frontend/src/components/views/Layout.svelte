@@ -1,12 +1,23 @@
 <script>
     import Nav from "../common/Nav.svelte";
+
+    let scroll = 0
+    let el
+
+    const onScroll = e => scroll = e?.target?.scrollTop ?? 0
+
+    const setScroll = value => {
+        if (!el) return
+
+        el.scrollTop = value
+    }
 </script>
 
 <main>
     <Nav/>
 
-    <article>
-        <slot/>
+    <article bind:this={el} on:scroll={onScroll}>
+        <slot {scroll} {setScroll}/>
     </article>
 </main>
 
@@ -20,6 +31,7 @@
 
     article {
         flex: 1;
+        overflow-x: hidden;
         overflow-y: scroll;
         padding: 1rem;
     }
