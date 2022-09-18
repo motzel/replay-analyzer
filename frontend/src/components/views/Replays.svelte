@@ -1,10 +1,10 @@
 <script>
     import {tick} from "svelte";
     import {router} from 'tinro';
+    import {throttle} from "../../debounce.js";
     import replaysStore from '../../stores/replays.js'
     import ReplayCard from "../replay/ReplayCard.svelte";
     import IntersectionObserver from "../common/IntersectionObserver.svelte";
-    import {throttle} from "../../debounce.js";
 
     export let scroll = 0
     export let setScroll

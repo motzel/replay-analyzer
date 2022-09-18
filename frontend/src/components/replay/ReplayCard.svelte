@@ -26,14 +26,16 @@
                 <div class="line">
                     <span></span>
 
-                    <Difficulty diff={replay?.info?.difficulty}/>
+                    <Difficulty diff={replay?.info?.difficulty} mode={replay?.info?.mode}/>
                 </div>
 
                 <div class="line">
                     {#if replay?.info?.accuracy === replay?.info.fcAccuracy}
-                        <sl-tag size="small" variant="success" pill>
-                            FC
-                        </sl-tag>
+                        <sl-tooltip content="Full combo">
+                            <sl-tag size="small" variant="success" pill>
+                                FC
+                            </sl-tag>
+                        </sl-tooltip>
                     {:else}
                         <sl-tooltip content={mistakesTooltip}>
                             <sl-tag size="small" variant="danger" pill>

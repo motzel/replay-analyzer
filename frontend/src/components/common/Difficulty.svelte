@@ -1,5 +1,6 @@
 <script>
     export let diff;
+    export let mode
 
     const diffColors = {
         easy: 'MediumSeaGreen',
@@ -13,7 +14,7 @@
 </script>
 
 {#if diff?.length}
-    <sl-tag size="small" pill style:--fg="white" style:--bg={bgColor}>{diff}</sl-tag>
+    <sl-tag size="small" pill style:--fg="white" style:--bg={bgColor}>{diff} {mode?.length && mode != 'Standard' ? `/ ${mode}` : ''}</sl-tag>
 {/if}
 
 <style>
