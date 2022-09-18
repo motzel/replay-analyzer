@@ -1,6 +1,6 @@
 module github.com/motzel/replay-analyzer
 
-go 1.17
+go 1.18
 
 require (
 	github.com/motzel/go-bsor v0.9.1

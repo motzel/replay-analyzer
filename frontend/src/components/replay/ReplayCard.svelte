@@ -8,6 +8,12 @@
     export let hash = ''
 
     $: replayUrl = `/replays/${replay?.filename}#${hash}`
+    $: misses = replay?.stats?.total?.misses ?? 0
+    $: badCuts = replay?.stats?.total?.badCuts ?? 0
+    $: bombHits = replay?.stats?.total?.bombHits ?? 0
+    $: wallHits = replay?.info?.wallHits ?? 0
+    $: totalMistakes = misses + badCuts + bombHits + wallHits
+    $: mistakesTooltip = `Misses: ${misses}, Bad cuts: ${badCuts}, Bomb hits: ${bombHits}, Wall hits: ${wallHits}`
 </script>
 
 {#if replay}
@@ -29,7 +35,13 @@
                             FC
                         </sl-tag>
                     {:else}
-                        <span></span>
+                        <sl-tooltip content={mistakesTooltip}>
+                            <sl-tag size="small" variant="danger" pill>
+                                x
+                                <sl-format-number lang={navigator?.language ?? 'en'}
+                                                  value={totalMistakes}></sl-format-number>
+                            </sl-tag>
+                        </sl-tooltip>
                     {/if}
 
                     <Acc value={replay?.info?.accuracy}/>
@@ -47,7 +59,7 @@
 
         <div slot="footer">
             <small>
-                <Date date={replay?.info?.timeSet} sync={true} />
+                <Date date={replay?.info?.timeSet} sync={true}/>
             </small>
             <sl-button variant="primary" size="small" pill
                        on:click={() => router.goto(replayUrl)}>

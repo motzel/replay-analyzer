@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/motzel/go-bsor/bsor"
+	"github.com/motzel/go-bsor/bsor/buffer"
 	runtime2 "github.com/wailsapp/wails/v2/pkg/runtime"
 	"io/ioutil"
 	"os"
@@ -51,11 +52,72 @@ func (app *App) LoadReplay(fileName string) (*bsor.ReplayEventsWithStats, error)
 	return bsor.NewReplayEventsWithStats(replayEvents), nil
 }
 
+type HandStat struct {
+	AccCut         buffer.Stats[bsor.CutValue]   `json:"accCut"`
+	BeforeCut      buffer.Stats[bsor.CutValue]   `json:"beforeCut"`
+	AfterCut       buffer.Stats[bsor.CutValue]   `json:"afterCut"`
+	Score          buffer.Stats[bsor.CutValue]   `json:"score"`
+	TimeDependence buffer.Stats[bsor.SwingValue] `json:"timeDependence"`
+	PreSwing       buffer.Stats[bsor.SwingValue] `json:"preSwing"`
+	PostSwing      buffer.Stats[bsor.SwingValue] `json:"postSwing"`
+	Notes          bsor.Counter                  `json:"notes"`
+	Misses         bsor.Counter                  `json:"misses"`
+	BadCuts        bsor.Counter                  `json:"badCuts"`
+	BombHits       bsor.Counter                  `json:"bombHits"`
+	MaxCombo       bsor.Counter                  `json:"maxCombo"`
+}
+
+func NewHandStat(bsorHandStat *bsor.HandStat) *HandStat {
+	return &HandStat{
+		AccCut:         bsorHandStat.AccCut,
+		BeforeCut:      bsorHandStat.BeforeCut,
+		AfterCut:       bsorHandStat.AfterCut,
+		Score:          bsorHandStat.Score,
+		TimeDependence: bsorHandStat.TimeDependence,
+		PreSwing:       bsorHandStat.PreSwing,
+		PostSwing:      bsorHandStat.PostSwing,
+		Notes:          bsorHandStat.Notes,
+		Misses:         bsorHandStat.Misses,
+		BadCuts:        bsorHandStat.BadCuts,
+		BombHits:       bsorHandStat.BombHits,
+		MaxCombo:       bsorHandStat.MaxCombo,
+	}
+}
+
+type Stats struct {
+	Left  HandStat `json:"left"`
+	Right HandStat `json:"right"`
+	Total HandStat `json:"total"`
+}
+
+func NewStats(bsorStats *bsor.Stats) *Stats {
+	return &Stats{
+		Left:  *NewHandStat(&bsorStats.Left),
+		Right: *NewHandStat(&bsorStats.Right),
+		Total: *NewHandStat(&bsorStats.Total),
+	}
+}
+
+type Info struct {
+	bsor.ReplayEventsInfo
+	WallHits bsor.Counter `json:"wallHits"`
+	Pauses   bsor.Counter `json:"pauses"`
+}
+
+func NewInfo(events *bsor.ReplayEventsWithStats) *Info {
+	return &Info{
+		ReplayEventsInfo: events.Info,
+		WallHits:         len(events.Walls),
+		Pauses:           len(events.Pauses),
+	}
+}
+
 type ReplayItem struct {
-	Dir      string                 `json:"dir"`
-	Filename string                 `json:"filename"`
-	Info     *bsor.ReplayEventsInfo `json:"info"`
-	Error    *string                `json:"error"`
+	Dir      string  `json:"dir"`
+	Filename string  `json:"filename"`
+	Info     *Info   `json:"info"`
+	Stats    *Stats  `json:"stats"`
+	Error    *string `json:"error"`
 }
 
 type IndexProgress struct {
@@ -144,8 +206,8 @@ func (app *App) IndexReplays(dir string) ([]ReplayItem, error) {
 					jobErr := err.Error()
 					job.Error = &jobErr
 				} else {
-					replayInfo := replay.Info
-					job.Info = &replayInfo
+					job.Info = NewInfo(replay)
+					job.Stats = NewStats(&replay.Stats)
 				}
 
 				results <- job

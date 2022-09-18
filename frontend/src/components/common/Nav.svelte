@@ -7,13 +7,15 @@
     <img alt="App logo" id="logo" src="{logo}">
 
     <section class="center">
-        <sl-input placeholder="Search..." size="medium" pill>
-            <sl-icon name="search" slot="suffix"></sl-icon>
-        </sl-input>
+        <sl-tooltip content="Search not implemented yet">
+            <sl-input placeholder="Search..." size="medium" pill>
+                <sl-icon name="search" slot="suffix"></sl-icon>
+            </sl-input>
+        </sl-tooltip>
     </section>
 
     <section class="right">
-        <sl-tooltip content="Settings">
+        <sl-tooltip content="Settings not implemented yet">
             <sl-icon-button class="settings" name="gear" label="Settings"></sl-icon-button>
         </sl-tooltip>
 
