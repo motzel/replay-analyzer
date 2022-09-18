@@ -38,6 +38,8 @@
             <header>
                 {replay?.info?.songName}
             </header>
+
+            <small>{replay?.info?.playerName}</small>
         </div>
 
         <div slot="footer">
