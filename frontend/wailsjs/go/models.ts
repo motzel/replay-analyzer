@@ -184,6 +184,7 @@ export namespace main {
 	export class ReplayItem {
 	    dir: string;
 	    filename: string;
+	    absPath: string;
 	    info?: Info;
 	    stats?: Stats;
 	    error?: string;
@@ -196,6 +197,7 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.dir = source["dir"];
 	        this.filename = source["filename"];
+	        this.absPath = source["absPath"];
 	        this.info = this.convertValues(source["info"], Info);
 	        this.stats = this.convertValues(source["stats"], Stats);
 	        this.error = source["error"];
@@ -226,24 +228,6 @@ export namespace main {
 
 export namespace buffer {
 	
-	export class Stats[uint16] {
-	    min: number;
-	    avg: number;
-	    med: number;
-	    max: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new Stats[uint16](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
-	    }
-	}
 	export class Stats[float64] {
 	    min: number;
 	    avg: number;
@@ -280,6 +264,24 @@ export namespace buffer {
 	        this.med = source["med"];
 	        this.max = source["max"];
 	        this.count = source["count"];
+	    }
+	}
+	export class Stats[uint16] {
+	    min: number;
+	    avg: number;
+	    med: number;
+	    max: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Stats[uint16](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
 	    }
 	}
 
@@ -709,6 +711,7 @@ export namespace bsor {
 		    return a;
 		}
 	}
+	
 
 }
 

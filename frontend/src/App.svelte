@@ -57,9 +57,9 @@
             </Layout>
         </Route>
 
-        <Route path="/:filename" let:meta>
+        <Route path="/:filepath" let:meta>
             <Layout>
-                <Replay filename={meta.params.filename} />
+                <Replay filepath={meta.params.filepath} />
             </Layout>
         </Route>
     </Route>

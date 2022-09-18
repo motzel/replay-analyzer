@@ -63,6 +63,6 @@
     }
 
     .error {
-        color: red;
+        color: var(--sl-color-danger-500);
     }
 </style>

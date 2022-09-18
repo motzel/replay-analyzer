@@ -50,6 +50,10 @@
         max-width: min(50rem, 100%);
     }
 
+    .center sl-input::part(input) {
+        cursor: not-allowed;
+    }
+
     .right {
         display: flex;
         align-items: center;

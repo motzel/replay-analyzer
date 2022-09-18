@@ -3,11 +3,13 @@
     import Difficulty from "../common/Difficulty.svelte"
     import Acc from "../common/Acc.svelte"
     import Date from "../common/Date.svelte";
+    import PlayerName from "../common/PlayerName.svelte";
+    import Tag from "../common/Tag.svelte";
 
     export let replay
     export let hash = ''
 
-    $: replayUrl = `/replays/${replay?.filename}#${hash}`
+    $: replayUrl = `/replays/${replay?.absPath}#${hash}`
     $: misses = replay?.stats?.total?.misses ?? 0
     $: badCuts = replay?.stats?.total?.badCuts ?? 0
     $: bombHits = replay?.stats?.total?.bombHits ?? 0
@@ -46,7 +48,7 @@
                         </sl-tooltip>
                     {/if}
 
-                    <Acc value={replay?.info?.accuracy}/>
+                    <Tag><Acc value={replay?.info?.accuracy}/></Tag>
                 </div>
             </div>
         </div>
@@ -56,7 +58,9 @@
                 {replay?.info?.songName}
             </header>
 
-            <small>{replay?.info?.playerName}</small>
+            <small>
+                <PlayerName playerName={replay?.info?.playerName} playerId={replay?.info?.playerId}/>
+            </small>
         </div>
 
         <div slot="footer">

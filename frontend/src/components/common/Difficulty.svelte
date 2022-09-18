@@ -1,6 +1,9 @@
 <script>
+    import Tag from "./Tag.svelte";
+
     export let diff;
     export let mode
+    export let short = false;
 
     const diffColors = {
         easy: 'MediumSeaGreen',
@@ -10,11 +13,21 @@
         expertplus: '#8f48db',
     };
 
+    const diffShortNames = {
+        easy: 'E',
+        normal: 'N',
+        hard: 'H',
+        expert: 'Ex',
+        expertplus: 'E+',
+    }
+
     $: bgColor = diffColors?.[diff?.toLowerCase()] ?? 'var(--sl-color-neutral-0)'
+    $: name = short ? diffShortNames?.[diff?.toLowerCase()] ?? null : diff ?? null
 </script>
 
-{#if diff?.length}
-    <sl-tag size="small" pill style:--fg="white" style:--bg={bgColor}>{diff} {mode?.length && mode != 'Standard' ? `/ ${mode}` : ''}</sl-tag>
+{#if name?.length}
+    <Tag custom={true} color="white" {bgColor}
+         borderColor={bgColor}>{name} {!short && mode?.length && mode != 'Standard' ? `/ ${mode}` : ''}</Tag>
 {/if}
 
 <style>

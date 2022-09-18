@@ -67,7 +67,7 @@
 <section>
     {#if filteredReplays?.length}
         <section class="replays">
-            {#each filteredReplays as replay}
+            {#each filteredReplays as replay (`${replay?.dir ?? ''}/${replay?.filename}`)}
                 <ReplayCard {replay} {hash}/>
             {/each}
 
