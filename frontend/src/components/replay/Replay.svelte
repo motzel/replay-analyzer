@@ -42,7 +42,7 @@
 
         <div slot="footer">
             <small>
-                <Date date={replay?.info?.timeSet} />
+                <Date date={replay?.info?.timeSet} sync={true} />
             </small>
             <sl-button variant="primary" size="small" pill
                        on:click={() => router.goto(`/replays/${replay?.filename}`)}>
@@ -113,6 +113,14 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         white-space: normal;
+    }
+
+    .replay .body small {
+        display: block;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        color: var(--sl-color-neutral-500);
     }
 
     .replay [slot='footer'] {
