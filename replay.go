@@ -6,10 +6,13 @@ import (
 	"github.com/motzel/go-bsor/bsor"
 	"github.com/motzel/go-bsor/bsor/buffer"
 	runtime2 "github.com/wailsapp/wails/v2/pkg/runtime"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -145,6 +148,34 @@ func (idx *IndexProgress) Processed(item *ReplayItem) *IndexProgress {
 	return idx
 }
 
+func fileNameWithoutExt(fileName string) string {
+	return strings.TrimSuffix(filepath.Base(fileName), filepath.Ext(fileName))
+}
+
+func renameFile(dir string, file fs.FileInfo) (string, error) {
+	src := filepath.Join(dir, file.Name())
+
+	r, _ := regexp.Compile("(_\\d+)+$")
+	fileNameNoExt := fileNameWithoutExt(file.Name())
+
+	if r.MatchString(fileNameNoExt) {
+		// suffix already added
+		return file.Name(), nil
+	}
+
+	fileNameWithoutSuffix := r.ReplaceAllString(fileNameNoExt, "")
+
+	newFileName := fileNameWithoutSuffix + "_" + strconv.FormatInt(file.ModTime().Unix(), 10) + ".bsor"
+
+	dst := filepath.Join(dir, newFileName)
+
+	if err := os.Rename(src, dst); err != nil {
+		return "", err
+	}
+
+	return newFileName, nil
+}
+
 func (app *App) IndexReplays(dir string) ([]ReplayItem, error) {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -166,7 +197,12 @@ func (app *App) IndexReplays(dir string) ([]ReplayItem, error) {
 			continue
 		}
 
-		bsorFiles = append(bsorFiles, ReplayItem{Filename: file.Name(), Dir: dir})
+		var newFileName string
+		if newFileName, err = renameFile(dir, file); err != nil {
+			newFileName = file.Name()
+		}
+
+		bsorFiles = append(bsorFiles, ReplayItem{Filename: newFileName, Dir: dir})
 	}
 
 	progress := IndexProgress{Length: len(bsorFiles), ProcessedFiles: make([]string, 0, len(bsorFiles))}
