@@ -3,7 +3,7 @@ module github.com/motzel/replay-analyzer
 go 1.17
 
 require (
-	github.com/motzel/go-bsor v0.9.0
+	github.com/motzel/go-bsor v0.9.1
 	github.com/wailsapp/wails/v2 v2.0.0-rc.1.1
 )
 
