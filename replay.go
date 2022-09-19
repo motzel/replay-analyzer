@@ -176,7 +176,10 @@ func renameFile(dir string, file fs.FileInfo) (string, error) {
 	return newFileName, nil
 }
 
-func (app *App) IndexReplays(dir string) ([]ReplayItem, error) {
+func (app *App) IndexReplays() ([]ReplayItem, error) {
+	// TODO: add support for other directories: app.config.OtherDirs() and ReplaysDir()/Download
+	dir := app.config.ReplaysDir()
+
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return nil, err

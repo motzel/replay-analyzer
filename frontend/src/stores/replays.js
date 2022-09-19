@@ -16,8 +16,8 @@ store = (() => {
     const {subscribe: failedSubscribe, set: failedSet} = writable(failed)
     const {subscribe: progressSubscribe, set: progressSet} = writable(progress)
 
-    const reindex = async (dir = `.\\Replays`) => {
-        IndexReplays(dir)
+    const reindex = async () => {
+        IndexReplays()
             .then(data => {
                 replays = (data?.filter(r => !r.error) ?? []).sort((a, b) => b?.info?.timeSet?.localeCompare(a?.info?.timeSet))
                 failed = data?.filter(r => r.error) ?? []

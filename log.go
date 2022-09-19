@@ -13,8 +13,8 @@ func NewMyLog() *MyLog {
 	multi := io.MultiWriter(
 		&lumberjack.Logger{
 			Filename:   "./replay-analyzer.log",
-			MaxSize:    3, // megabytes
-			MaxBackups: 30,
+			MaxSize:    5, // megabytes
+			MaxBackups: 20,
 			LocalTime:  false,
 		},
 		os.Stderr,

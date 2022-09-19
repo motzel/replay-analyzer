@@ -6,8 +6,8 @@ export function GetCwd() {
   return window['go']['main']['App']['GetCwd']();
 }
 
-export function IndexReplays(arg1) {
-  return window['go']['main']['App']['IndexReplays'](arg1);
+export function IndexReplays() {
+  return window['go']['main']['App']['IndexReplays']();
 }
 
 export function LoadReplay(arg1) {
