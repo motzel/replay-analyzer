@@ -6,10 +6,6 @@ export function GetCwd() {
   return window['go']['main']['App']['GetCwd']();
 }
 
-export function Greet(arg1) {
-  return window['go']['main']['App']['Greet'](arg1);
-}
-
 export function IndexReplays(arg1) {
   return window['go']['main']['App']['IndexReplays'](arg1);
 }

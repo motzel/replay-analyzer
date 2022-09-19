@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -20,23 +19,22 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+
+	runtime.LogInfo(ctx, "Frontend view created")
+}
+
+func (a *App) domReady(ctx context.Context) {
+	a.ctx = ctx
+
+	runtime.LogInfo(ctx, "Application loaded")
 }
 
 func (b *App) beforeClose(ctx context.Context) (prevent bool) {
-	dialog, err := runtime.MessageDialog(ctx, runtime.MessageDialogOptions{
-		Title:   "Quit?",
-		Message: "Are you sure you want to quit?",
-		Type:    runtime.QuestionDialog,
-	})
-
-	if err != nil {
-		return false
-	}
-
-	return dialog != "Yes"
+	return false
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+func (a *App) shutdown(ctx context.Context) {
+	a.ctx = ctx
+
+	runtime.LogInfo(ctx, "Application shutting down...")
 }
