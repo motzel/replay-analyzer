@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/motzel/go-bsor/bsor"
 	"github.com/motzel/go-bsor/bsor/buffer"
-	runtime2 "github.com/wailsapp/wails/v2/pkg/runtime"
+	wails "github.com/wailsapp/wails/v2/pkg/runtime"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -152,7 +152,7 @@ func fileNameWithoutExt(fileName string) string {
 	return strings.TrimSuffix(filepath.Base(fileName), filepath.Ext(fileName))
 }
 
-func renameFile(dir string, file fs.FileInfo) (string, error) {
+func RenameBsorFile(dir string, file fs.FileInfo) (string, error) {
 	src := filepath.Join(dir, file.Name())
 
 	r, _ := regexp.Compile("(_\\d+)+$")
@@ -180,6 +180,8 @@ func (app *App) IndexReplays() ([]ReplayItem, error) {
 	// TODO: add support for other directories: app.config.OtherDirs() and ReplaysDir()/Download
 	dir := app.config.ReplaysDir()
 
+	wails.LogInfof(app.ctx, "Reading directory: %v", dir)
+
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return nil, err
@@ -201,15 +203,19 @@ func (app *App) IndexReplays() ([]ReplayItem, error) {
 		}
 
 		var newFileName string
-		if newFileName, err = renameFile(dir, file); err != nil {
+		if newFileName, err = RenameBsorFile(dir, file); err != nil {
 			newFileName = file.Name()
 		}
 
 		bsorFiles = append(bsorFiles, ReplayItem{Filename: newFileName, Dir: dir})
 	}
 
+	wails.LogInfof(app.ctx, "%v BSOR files(s) found", len(bsorFiles))
+
 	progress := IndexProgress{Length: len(bsorFiles), ProcessedFiles: make([]string, 0, len(bsorFiles))}
-	runtime2.EventsEmit(app.ctx, "indexing", progress)
+	wails.EventsEmit(app.ctx, "indexing", progress)
+
+	wails.LogInfof(app.ctx, "Starting replays indexing using %v CPU cores", parallel)
 
 	// jobs producer
 	go func() {
@@ -222,7 +228,7 @@ func (app *App) IndexReplays() ([]ReplayItem, error) {
 	// results receiver
 	go func(done chan bool) {
 		for item := range results {
-			runtime2.EventsEmit(app.ctx, "indexing", progress.Processed(item))
+			wails.EventsEmit(app.ctx, "indexing", progress.Processed(item))
 		}
 		done <- true
 	}(done)
@@ -239,11 +245,13 @@ func (app *App) IndexReplays() ([]ReplayItem, error) {
 			for job := range jobs {
 				inputFilename := filepath.Join(job.Dir, job.Filename)
 
-				runtime2.EventsEmit(app.ctx, "indexing", progress.Add(job))
+				wails.EventsEmit(app.ctx, "indexing", progress.Add(job))
 
 				if replay, err := app.LoadReplay(inputFilename); err != nil {
 					jobErr := err.Error()
 					job.Error = &jobErr
+
+					wails.LogErrorf(app.ctx, "Replay decoding error: %s", jobErr)
 				} else {
 					job.Info = NewInfo(replay)
 					job.Stats = NewStats(&replay.Stats)
@@ -258,7 +266,11 @@ func (app *App) IndexReplays() ([]ReplayItem, error) {
 
 	<-done
 
-	runtime2.EventsEmit(app.ctx, "indexing", nil)
+	wails.LogInfo(app.ctx, "Indexing completed")
+
+	wails.EventsEmit(app.ctx, "indexing", nil)
+
+	_ = app.WatchReplaysDirectory()
 
 	return bsorFiles, nil
 }

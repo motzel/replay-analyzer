@@ -49,6 +49,5 @@ func (l MyLog) Error(message string) {
 }
 
 func (l MyLog) Fatal(message string) {
-	//TODO implement me
-	panic("implement me")
+	l.Print("[Fatal] " + message)
 }

@@ -709,7 +709,6 @@ export namespace bsor {
 		    return a;
 		}
 	}
-	
 
 }
 

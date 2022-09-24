@@ -3,6 +3,7 @@ module github.com/motzel/replay-analyzer
 go 1.18
 
 require (
+	github.com/fsnotify/fsnotify v1.5.4
 	github.com/motzel/go-bsor v0.9.1
 	github.com/wailsapp/wails/v2 v2.0.0-rc.1.1
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0

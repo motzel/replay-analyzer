@@ -8,3 +8,5 @@ export function GetCwd():Promise<string>;
 export function IndexReplays():Promise<Array<main.ReplayItem>>;
 
 export function LoadReplay(arg1:string):Promise<bsor.ReplayEventsWithStats>;
+
+export function WatchReplaysDirectory():Promise<Error>;

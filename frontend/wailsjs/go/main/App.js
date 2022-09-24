@@ -13,3 +13,7 @@ export function IndexReplays() {
 export function LoadReplay(arg1) {
   return window['go']['main']['App']['LoadReplay'](arg1);
 }
+
+export function WatchReplaysDirectory() {
+  return window['go']['main']['App']['WatchReplaysDirectory']();
+}

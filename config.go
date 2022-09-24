@@ -1,6 +1,8 @@
 package main
 
-import "path/filepath"
+import (
+	"path/filepath"
+)
 
 type Config struct {
 	replaysDir string

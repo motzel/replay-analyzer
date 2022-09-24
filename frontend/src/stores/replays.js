@@ -36,10 +36,29 @@ store = (() => {
 
     const load = async filename => LoadReplay(filename)
 
+    const compare = (r1, r2) => r1?.dir && r1?.filename && r1?.dir === r2?.dir && r1?.filename === r2?.filename
+
     EventsOn('indexing', function (data) {
         progress = data
 
         progressSet(progress)
+    })
+
+    EventsOn('replay-added', function (data) {
+        let existingIdx = (replays ?? []).findIndex(r => compare(r, data))
+        if (existingIdx >= 0) {
+            replays[existingIdx] = data;
+        } else {
+            replays = [...replays, data]
+        }
+
+        set(replays)
+    })
+
+    EventsOn('replay-removed', function (data) {
+        replays = (replays ?? []).filter(r => !compare(r, data))
+
+        set(replays)
     })
 
     return {

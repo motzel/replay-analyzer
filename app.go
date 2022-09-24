@@ -2,19 +2,21 @@ package main
 
 import (
 	"context"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"github.com/fsnotify/fsnotify"
+	wails "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
 type App struct {
-	ctx    context.Context
-	config Config
+	ctx     context.Context
+	config  *Config
+	watcher *fsnotify.Watcher
 }
 
 // NewApp creates a new App application struct
 func NewApp(replaysDir string) *App {
 	return &App{
-		config: *NewConfig(replaysDir),
+		config: NewConfig(replaysDir),
 	}
 }
 
@@ -23,13 +25,29 @@ func NewApp(replaysDir string) *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
-	runtime.LogInfo(ctx, "Frontend view created")
+	wails.LogInfo(ctx, "Frontend view created")
 }
 
 func (a *App) domReady(ctx context.Context) {
 	a.ctx = ctx
 
-	runtime.LogInfo(ctx, "Application loaded")
+	wails.LogInfo(ctx, "Frontend application loaded")
+}
+
+func (a *App) watchDirectory(dir string) error {
+	if err := a.watcher.Add(dir); err != nil {
+		wails.LogErrorf(a.ctx, "Directory watching error: %v", dir)
+
+		return err
+	}
+
+	wails.LogInfof(a.ctx, "Starting to watch a directory: %v", dir)
+
+	return nil
+}
+
+func (a *App) WatchReplaysDirectory() error {
+	return a.watchDirectory(a.config.ReplaysDir())
 }
 
 func (b *App) beforeClose(ctx context.Context) (prevent bool) {
@@ -39,5 +57,5 @@ func (b *App) beforeClose(ctx context.Context) (prevent bool) {
 func (a *App) shutdown(ctx context.Context) {
 	a.ctx = ctx
 
-	runtime.LogInfo(ctx, "Application shutting down...")
+	wails.LogInfo(ctx, "Application shutting down...")
 }
