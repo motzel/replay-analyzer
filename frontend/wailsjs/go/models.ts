@@ -228,6 +228,24 @@ export namespace main {
 
 export namespace buffer {
 	
+	export class Stats[uint16] {
+	    min: number;
+	    avg: number;
+	    med: number;
+	    max: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Stats[uint16](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
+	    }
+	}
 	export class Stats[float64] {
 	    min: number;
 	    avg: number;
@@ -264,24 +282,6 @@ export namespace buffer {
 	        this.med = source["med"];
 	        this.max = source["max"];
 	        this.count = source["count"];
-	    }
-	}
-	export class Stats[uint16] {
-	    min: number;
-	    avg: number;
-	    med: number;
-	    max: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new Stats[uint16](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
 	    }
 	}
 
@@ -381,6 +381,7 @@ export namespace bsor {
 		    return a;
 		}
 	}
+	
 	export class Pause {
 	    duration: number;
 	    time: number;
@@ -711,7 +712,6 @@ export namespace bsor {
 		    return a;
 		}
 	}
-	
 
 }
 
