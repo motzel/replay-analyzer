@@ -8,7 +8,8 @@
     import ReplayHeader from "../replay/ReplayHeader.svelte";
     import PausesBadge from "../replay/PausesBadge.svelte";
     import StatsBadge from "../common/StatsBadge.svelte";
-    import PositionGrid from "../replay/grid/PositionGrid.svelte";
+    import MultiPositionGrid from "../replay/grid/HandPositionGrid.svelte";
+    import MultiDirectionGrid from "../replay/grid/HandDirectionGrid.svelte";
     import DirectionGrid from "../replay/grid/DirectionGrid.svelte";
 
     export let filepath;
@@ -140,19 +141,21 @@
             {/each}
 
             Direction GRID
+            <DirectionGrid grid={data?.stats?.total?.directionGrid} type="avg" />
             <div class="grids">
-                <DirectionGrid stats={data?.stats} hand="total" type="min" />
-                <DirectionGrid stats={data?.stats} hand="total" type="avg" />
-                <DirectionGrid stats={data?.stats} hand="total" type="med" />
-                <DirectionGrid stats={data?.stats} hand="total" type="max" />
+                <MultiDirectionGrid stats={data?.stats} hand="total" type="min" />
+                <MultiDirectionGrid stats={data?.stats} hand="total" type="avg" />
+                <MultiDirectionGrid stats={data?.stats} hand="total" type="med" />
+                <MultiDirectionGrid stats={data?.stats} hand="total" type="max" />
             </div>
 
             Position GRID
+            <MultiPositionGrid stats={data?.stats} hand="total" type="avg" />
             <div class="grids">
-                <PositionGrid stats={data?.stats} hand="total" type="min" />
-                <PositionGrid stats={data?.stats} hand="total" type="avg" />
-                <PositionGrid stats={data?.stats} hand="total" type="med" />
-                <PositionGrid stats={data?.stats} hand="total" type="max" />
+                <MultiPositionGrid stats={data?.stats} hand="total" type="min" />
+                <MultiPositionGrid stats={data?.stats} hand="total" type="avg" />
+                <MultiPositionGrid stats={data?.stats} hand="total" type="med" />
+                <MultiPositionGrid stats={data?.stats} hand="total" type="max" />
             </div>
 
         </section>

@@ -1,20 +1,21 @@
 <script>
-    import Grid from "./Grid.svelte";
+    import PositionGrid from "./PositionGrid.svelte";
 
-    export let grid
+    export let stats
+    export let hand = 'total'
     export let type = 'avg'
 
     $: digits = type === 'avg' ? 2 : 0
 </script>
 
-{#if grid?.[type]?.length === 12}
-    <Grid grid={grid[type]} count={grid?.count} {digits} cols={4} rows={3}>
+{#if stats?.[hand]?.positionGrid?.[type]?.length === 12}
+    <PositionGrid grid={stats[hand].positionGrid} {type}>
         <svelte:fragment slot="tooltip" let:value let:count let:idx let:digits>
             <slot name="tooltip" {value} {count} {idx} {digits}>
                 Notes count: {count}
             </slot>
         </svelte:fragment>
-    </Grid>
+    </PositionGrid>
 {/if}
 
 <style>

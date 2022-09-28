@@ -41,8 +41,8 @@
 <style>
     section {
         display: inline-grid;
-        grid-template-columns: repeat(var(--cols), minmax(4em, 33%));
-        grid-template-rows: repeat(var(--rows), minmax(4em, 33%));
+        grid-template-columns: repeat(var(--cols), minmax(4.5em, 33%));
+        grid-template-rows: repeat(var(--rows), minmax(4.5em, 33%));
         justify-content: stretch;
         align-items: stretch;
         font-size: 1em;
@@ -54,9 +54,8 @@
         justify-content: center;
         align-items: center;
         position: relative;
-        width: 4em;
-        height: 4em;
-        padding: .5em;
+        width: 4.5em;
+        height: 4.5em;
         background: var(--sl-color-neutral-100);
         border-radius: var(--sl-border-radius-large);
         cursor: help;
