@@ -1,5 +1,5 @@
 <script>
-    import Tag from "./Tag.svelte";
+    import Tag from "../../common/Tag.svelte";
 
     export let diff;
     export let mode

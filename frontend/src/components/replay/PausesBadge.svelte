@@ -1,7 +1,7 @@
 <script>
     import {padNumber} from "../../utils/string.js";
-    import Tag from "./Tag.svelte";
-    import Value from "./Value.svelte";
+    import Tag from "../common/Tag.svelte";
+    import Value from "../common/Value.svelte";
 
     export let pauses;
     export let size = 'small'

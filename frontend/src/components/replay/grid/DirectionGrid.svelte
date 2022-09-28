@@ -1,9 +1,10 @@
 <script>
     import Grid from "./Grid.svelte";
-    import ArrowIcon from "./ArrowIcon.svelte";
-    import DotIcon from "./DotIcon.svelte";
+    import ArrowIcon from "../../common/ArrowIcon.svelte";
+    import DotIcon from "../../common/DotIcon.svelte";
 
-    export let grid
+    export let stats
+    export let hand = 'total'
     export let type = 'avg'
 
     const gridOrder = [
@@ -19,11 +20,11 @@
     ]
 
     $: digits = type === 'avg' ? 2 : 0
-    $: gridSorted = grid?.[type]?.length === 9
-        ? grid[type].map((value, idx) => ({
+    $: gridSorted = stats?.[hand]?.directionGrid?.[type]?.length === 9
+        ? stats[hand].directionGrid[type].map((value, idx) => ({
             value,
             idx,
-            count: grid?.count[idx] ?? null, ...gridOrder[idx]
+            count: stats?.[hand]?.directionGrid?.count[idx] ?? null, ...gridOrder[idx]
         })).sort((a, b) => {
             return a.order - b.order
         })
@@ -35,6 +36,10 @@
 
 {#if finalGrid?.length === 9}
     <Grid grid={finalGrid} {count} {digits} cols={3} rows={3}>
+        <svelte:fragment slot="tooltip" let:value let:count let:idx>
+            <header>Notes count: {count}</header>
+        </svelte:fragment>
+
         <svelte:fragment slot="background" let:idx>
             {#if gridSorted?.[idx]}
                 <span class="icon">
@@ -56,5 +61,9 @@
         font-size: 3.5em;
         color: var(--sl-color-neutral-200);
         z-index: 0;
+    }
+
+    header {
+        font-weight: bold;
     }
 </style>

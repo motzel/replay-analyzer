@@ -1,6 +1,6 @@
 <script>
     import Difficulty from "./Difficulty.svelte";
-    import Tag from "./Tag.svelte";
+    import Tag from "../../common/Tag.svelte";
 
     export let info
 </script>

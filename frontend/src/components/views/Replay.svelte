@@ -1,15 +1,15 @@
 <script>
     import {router} from 'tinro';
     import replaysStore from '../../stores/replays.js'
-    import Acc from "../common/Acc.svelte";
+    import Acc from "../replay/Acc.svelte";
     import HandsBadge from "../common/HandsBadge.svelte";
-    import Song from "../common/Song.svelte";
+    import Song from "../replay/song/Song.svelte";
     import Badge from "../common/Badge.svelte";
-    import ReplayHeader from "../common/ReplayHeader.svelte";
-    import PausesBadge from "../common/PausesBadge.svelte";
+    import ReplayHeader from "../replay/ReplayHeader.svelte";
+    import PausesBadge from "../replay/PausesBadge.svelte";
     import StatsBadge from "../common/StatsBadge.svelte";
-    import PositionGrid from "../common/PositionGrid.svelte";
-    import DirectionGrid from "../common/DirectionGrid.svelte";
+    import PositionGrid from "../replay/grid/PositionGrid.svelte";
+    import DirectionGrid from "../replay/grid/DirectionGrid.svelte";
 
     export let filepath;
 
@@ -141,18 +141,18 @@
 
             Direction GRID
             <div class="grids">
-                <DirectionGrid grid={data?.stats?.total?.directionGrid} type="min" />
-                <DirectionGrid grid={data?.stats?.total?.directionGrid} type="avg" />
-                <DirectionGrid grid={data?.stats?.total?.directionGrid} type="med" />
-                <DirectionGrid grid={data?.stats?.total?.directionGrid} type="max" />
+                <DirectionGrid stats={data?.stats} hand="total" type="min" />
+                <DirectionGrid stats={data?.stats} hand="total" type="avg" />
+                <DirectionGrid stats={data?.stats} hand="total" type="med" />
+                <DirectionGrid stats={data?.stats} hand="total" type="max" />
             </div>
 
             Position GRID
             <div class="grids">
-                <PositionGrid grid={data?.stats?.total?.positionGrid} type="min" />
-                <PositionGrid grid={data?.stats?.total?.positionGrid} type="avg" />
-                <PositionGrid grid={data?.stats?.total?.positionGrid} type="med" />
-                <PositionGrid grid={data?.stats?.total?.positionGrid} type="max" />
+                <PositionGrid stats={data?.stats} hand="total" type="min" />
+                <PositionGrid stats={data?.stats} hand="total" type="avg" />
+                <PositionGrid stats={data?.stats} hand="total" type="med" />
+                <PositionGrid stats={data?.stats} hand="total" type="max" />
             </div>
 
         </section>

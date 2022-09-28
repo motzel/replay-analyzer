@@ -1,5 +1,5 @@
 <script>
-    import Value from "./Value.svelte";
+    import Value from "../../common/Value.svelte";
 
     export let grid
     export let count

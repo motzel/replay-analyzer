@@ -1,11 +1,11 @@
 <script>
     import {capitalize} from "../../utils/string.js";
     import PlayerName from "./PlayerName.svelte";
-    import Date from "./Date.svelte";
+    import Date from "../common/Date.svelte";
     import Headset from "./Headset.svelte";
     import Controller from "./Controller.svelte";
-    import Tag from "./Tag.svelte";
-    import Badge from "./Badge.svelte";
+    import Tag from "../common/Tag.svelte";
+    import Badge from "../common/Badge.svelte";
 
     export let info
 </script>

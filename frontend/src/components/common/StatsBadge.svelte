@@ -6,7 +6,6 @@
     export let tooltip = null
     export let stat
     export let digits = 2
-    export let suffix = ''
     export let size = 'small'
     export let type = 'decimal'
     export let variant = 'default'

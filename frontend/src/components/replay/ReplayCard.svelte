@@ -1,9 +1,9 @@
 <script>
     import {router} from 'tinro';
-    import Difficulty from "../common/Difficulty.svelte"
-    import Acc from "../common/Acc.svelte"
+    import Difficulty from "./song/Difficulty.svelte"
+    import Acc from "./Acc.svelte"
     import Date from "../common/Date.svelte";
-    import PlayerName from "../common/PlayerName.svelte";
+    import PlayerName from "./PlayerName.svelte";
     import Tag from "../common/Tag.svelte";
 
     export let replay

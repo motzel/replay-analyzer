@@ -381,7 +381,6 @@ export namespace bsor {
 		    return a;
 		}
 	}
-	
 	export class Pause {
 	    duration: number;
 	    time: number;
@@ -712,6 +711,7 @@ export namespace bsor {
 		    return a;
 		}
 	}
+	
 
 }
 
