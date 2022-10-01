@@ -8,15 +8,16 @@
     import ReplayHeader from "../replay/ReplayHeader.svelte";
     import PausesBadge from "../replay/PausesBadge.svelte";
     import StatsBadge from "../common/StatsBadge.svelte";
-    import HandPositionGrid from "../replay/grid/HandPositionGrid.svelte";
-    import HandDirectionGrid from "../replay/grid/HandDirectionGrid.svelte";
-    import DirectionGrid from "../replay/grid/DirectionGrid.svelte";
+    import Grid from "../replay/Grid.svelte";
 
     export let filepath;
 
     let isLoading = false
     let replay, replayFull
     let error
+
+    let hand = "total"
+    let statType = "avg"
 
     const hash = router.location.hash.get()
 
@@ -140,13 +141,21 @@
                 </div>
             {/each}
 
-            <div class="grids">
-                <div>Direction GRID</div>
-                <HandDirectionGrid stats={data?.stats} hand="total" statType="avg" withCounts={true} />
+            <sl-radio-group label="Select a hand" name={hand} value="total" on:sl-change={e => hand = e?.target?.value}>
+                <sl-radio-button size="small" value="left">Left</sl-radio-button>
+                <sl-radio-button size="small" value="right">Right</sl-radio-button>
+                <sl-radio-button size="small" value="total">Total</sl-radio-button>
+            </sl-radio-group>
 
-                <div>Position GRID</div>
-                <HandPositionGrid stats={data?.stats} hand="total" statType="avg" withCounts={true} />
-            </div>
+            <sl-radio-group label="Select a stat type" name={statType} value="avg"
+                            on:sl-change={e => statType = e?.target?.value}>
+                <sl-radio-button size="small" value="min">Min</sl-radio-button>
+                <sl-radio-button size="small" value="avg">Average</sl-radio-button>
+                <sl-radio-button size="small" value="med">Median</sl-radio-button>
+                <sl-radio-button size="small" value="max">Max</sl-radio-button>
+            </sl-radio-group>
+
+            <Grid stats={data?.stats} {hand} {statType} withCounts={true}/>
         </section>
     {:else }
         <p>Can not load replay file.</p>
