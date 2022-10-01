@@ -9,6 +9,3 @@
 {#if percent}
     <Value type="percent" value={percent}/>
 {/if}
-
-<style>
-</style>

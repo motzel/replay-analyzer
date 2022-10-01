@@ -9,6 +9,9 @@
     import PausesBadge from "../replay/PausesBadge.svelte";
     import StatsBadge from "../common/StatsBadge.svelte";
     import Grid from "../replay/Grid.svelte";
+    import HandRing from "../replay/HandRing.svelte";
+    import AccRing from "../replay/AccRing.svelte";
+    import Value from "../common/Value.svelte";
 
     export let filepath;
 
@@ -61,13 +64,26 @@
 
             <Song info={data?.info}/>
 
-            <Badge label="ACC" tooltip="Accuracy">
-                <Acc value={data?.info?.accuracy}/>
-            </Badge>
+            <AccRing value={data?.info?.accuracy ? data.info.accuracy / 100 : null} label="Accuracy">
+                <svelte:fragment slot="value" let:value>
+                    <Value {value} type="percent"/>
+                </svelte:fragment>
 
-            <Badge label="FC ACC" tooltip="Full Combo Accuracy (predicted scores for all misses)">
-                <Acc value={data?.info?.fcAccuracy}/>
-            </Badge>
+                <svelte:fragment slot="tooltip">
+                    Map accuracy
+                </svelte:fragment>
+            </AccRing>
+
+            <AccRing value={data?.info?.fcAccuracy ? data.info.fcAccuracy / 100 : null} label="FC Accuracy"
+                     color="green">
+                <svelte:fragment slot="value" let:value>
+                    <Value {value} type="percent"/>
+                </svelte:fragment>
+
+                <svelte:fragment slot="tooltip">
+                    Full Combo Accuracy (predicted scores for all misses)
+                </svelte:fragment>
+            </AccRing>
 
             <Badge label="Score" digits="0" value={data?.info?.score}/>
 
@@ -156,6 +172,13 @@
             </sl-radio-group>
 
             <Grid stats={data?.stats} {hand} {statType} withCounts={true}/>
+
+            <div>
+                <HandRing stats={data?.stats} key="beforeCut" {hand} {statType} withLabel={false}/>
+                <HandRing stats={data?.stats} key="accCut" {hand} {statType}/>
+                <HandRing stats={data?.stats} key="afterCut" {hand} {statType}/>
+                <HandRing stats={data?.stats} key="score" {hand} {statType}/>
+            </div>
         </section>
     {:else }
         <p>Can not load replay file.</p>

@@ -29,6 +29,7 @@
             import('@shoelace-style/shoelace/dist/components/tag/tag'),
             import('@shoelace-style/shoelace/dist/components/radio-group/radio-group'),
             import('@shoelace-style/shoelace/dist/components/radio-button/radio-button'),
+            import('@shoelace-style/shoelace/dist/components/progress-ring/progress-ring'),
             import('@shoelace-style/shoelace/dist/components/relative-time/relative-time'),
             import('@shoelace-style/shoelace/dist/components/format-number/format-number'),
         ])
