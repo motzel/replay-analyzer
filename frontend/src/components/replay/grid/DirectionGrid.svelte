@@ -4,7 +4,8 @@
     import DotIcon from "../../common/DotIcon.svelte";
 
     export let grid
-    export let type = 'avg'
+    export let statType = 'avg'
+    export let withCounts = false
 
     const gridOrder = [
         {order: 1, rotate: 0}, // TopCenter
@@ -18,9 +19,9 @@
         {order: 4, rotate: null}, // Dot
     ]
 
-    $: digits = type === 'avg' ? 2 : 0
-    $: gridSorted = grid?.[type]?.length === 9
-        ? grid[type].map((value, idx) => ({
+    $: digits = statType === 'avg' ? 2 : 0
+    $: gridSorted = grid?.[statType]?.length === 9
+        ? grid[statType].map((value, idx) => ({
             value,
             idx,
             count: grid?.count[idx] ?? null, ...gridOrder[idx]
@@ -28,37 +29,30 @@
             return a.order - b.order
         })
         : null
-
-    $: finalGrid = gridSorted?.map(g => g?.value ?? null) ?? null
-    $: count = gridSorted?.map(g => g?.count ?? null) ?? null
 </script>
 
-{#if finalGrid?.length === 9}
-    <Grid grid={finalGrid} {count} {digits} cols={3} rows={3}>
-        <svelte:fragment slot="tooltip" let:value let:count let:idx let:digits>
-            <slot name="tooltip" {value} {count} {idx} {digits}>
+{#if gridSorted?.length === 9}
+    <Grid grid={gridSorted} {digits} cols={3} rows={3} {withCounts}>
+        <svelte:fragment slot="tooltip" let:item let:value let:count let:idx let:digits>
+            <slot name="tooltip" {item} {value} {count} {idx} {digits}>
                 Notes count: {count}
             </slot>
         </svelte:fragment>
 
         <svelte:fragment slot="background" let:idx>
             {#if gridSorted?.[idx]}
-                <span class="icon">
                 {#if Number.isFinite(gridSorted[idx].rotate)}
                     <ArrowIcon rotate={gridSorted[idx].rotate}/>
                 {:else}
                     <DotIcon/>
                 {/if}
-                </span>
             {/if}
         </svelte:fragment>
     </Grid>
 {/if}
 
 <style>
-    .icon {
-        position: absolute;
-        top: -.175em;
+    :global(svg) {
         font-size: 3.5em;
         color: var(--sl-color-neutral-200);
         z-index: 0;

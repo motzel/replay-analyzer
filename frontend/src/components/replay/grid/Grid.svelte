@@ -2,36 +2,43 @@
     import Value from "../../common/Value.svelte";
 
     export let grid
-    export let count
+    export let valueKey = 'value'
+    export let countKey = 'count'
     export let digits = 0
     export let cols = 4
     export let rows = 3
+    export let withCounts = false
 </script>
 
 {#if cols && rows && grid?.length === cols * rows}
     <section style:--rows={rows} style:--cols={cols}>
-        {#each grid as value, idx}
-            {@const valueCount = count?.[idx] ?? null}
+        {#each grid as item, idx}
+            {@const value = item?.[valueKey] ?? null}
+            {@const count = item?.[countKey] ?? null}
             {@const placementVertical = Math.floor(idx / cols) === rows - 1 ? 'top' : 'bottom'}
             {@const placementHorizontal = ((idx % cols) + 1) / cols <= 0.5 ? '-start' : '-end'}
             <sl-tooltip placement={`${placementVertical}${placementHorizontal}`}
-                        disabled={!valueCount}>
+                        disabled={!count}>
                 <div slot="content">
-                    <slot name="tooltip" {value} count={valueCount} {idx} {digits}>
-                        Notes count: {valueCount}
+                    <slot name="tooltip" {item} {value} {count} {idx} {digits}>
+                        Notes count: {count}
                     </slot>
                 </div>
 
-                <div class="item" class:grayed={!valueCount && !value}>
+                <div class="item" class:grayed={!count && !value}>
                     <span class="value">
-                        <slot name="value" {value} {digits} {idx}>
-                            {#if valueCount}
+                        <slot name="value" {item} {value} {count} {idx} {digits}>
+                            {#if count}
                                 <Value value={value} {digits}/>
+
+                                {#if withCounts}
+                                    <small>(<Value value={count} digits={0} />)</small>
+                                {/if}
                             {/if}
                         </slot>
                     </span>
 
-                    <slot name="background" {value} {digits} {idx}/>
+                    <slot name="background" {item} {value} {count} {idx} {digits}/>
                 </div>
             </sl-tooltip>
         {/each}
@@ -49,16 +56,21 @@
         gap: .25em;
     }
 
+    sl-tooltip, sl-tooltip::part(body), section .tooltip-content {
+        font: inherit;
+    }
+
     .item {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
+        display: grid;
+        grid-template-rows: 1fr;
+        grid-template-columns: 1fr;
+        place-items: center;
         width: 4.5em;
         height: 4.5em;
         background: var(--sl-color-neutral-100);
         border-radius: var(--sl-border-radius-large);
         cursor: help;
+        overflow: hidden;
     }
 
     .item.grayed {
@@ -70,5 +82,16 @@
         line-height: 1;
         text-align: center;
         z-index: 2;
+    }
+
+    .item :global(> *) {
+        grid-row: 1/-1;
+        grid-column: 1/-1;
+    }
+
+    small {
+        display: block;
+        font-size: .65em;
+        margin-top: .25em;
     }
 </style>

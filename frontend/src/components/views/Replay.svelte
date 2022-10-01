@@ -8,8 +8,8 @@
     import ReplayHeader from "../replay/ReplayHeader.svelte";
     import PausesBadge from "../replay/PausesBadge.svelte";
     import StatsBadge from "../common/StatsBadge.svelte";
-    import MultiPositionGrid from "../replay/grid/HandPositionGrid.svelte";
-    import MultiDirectionGrid from "../replay/grid/HandDirectionGrid.svelte";
+    import HandPositionGrid from "../replay/grid/HandPositionGrid.svelte";
+    import HandDirectionGrid from "../replay/grid/HandDirectionGrid.svelte";
     import DirectionGrid from "../replay/grid/DirectionGrid.svelte";
 
     export let filepath;
@@ -140,24 +140,13 @@
                 </div>
             {/each}
 
-            Direction GRID
-            <DirectionGrid grid={data?.stats?.total?.directionGrid} type="avg" />
             <div class="grids">
-                <MultiDirectionGrid stats={data?.stats} hand="total" type="min" />
-                <MultiDirectionGrid stats={data?.stats} hand="total" type="avg" />
-                <MultiDirectionGrid stats={data?.stats} hand="total" type="med" />
-                <MultiDirectionGrid stats={data?.stats} hand="total" type="max" />
-            </div>
+                <div>Direction GRID</div>
+                <HandDirectionGrid stats={data?.stats} hand="total" statType="avg" withCounts={true} />
 
-            Position GRID
-            <MultiPositionGrid stats={data?.stats} hand="total" type="avg" />
-            <div class="grids">
-                <MultiPositionGrid stats={data?.stats} hand="total" type="min" />
-                <MultiPositionGrid stats={data?.stats} hand="total" type="avg" />
-                <MultiPositionGrid stats={data?.stats} hand="total" type="med" />
-                <MultiPositionGrid stats={data?.stats} hand="total" type="max" />
+                <div>Position GRID</div>
+                <HandPositionGrid stats={data?.stats} hand="total" statType="avg" withCounts={true} />
             </div>
-
         </section>
     {:else }
         <p>Can not load replay file.</p>
@@ -179,15 +168,5 @@
 
     .error {
         color: var(--sl-color-danger-500);
-    }
-
-    .grids {
-        font-size: .875rem;
-    }
-
-    /* TODO: remove it */
-    .grids :global(> *) {
-        margin-right: 1rem;
-        margin-bottom: 1rem;
     }
 </style>
