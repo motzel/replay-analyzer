@@ -129,6 +129,7 @@
 
     .cut.stats {
         place-self: center;
+        min-width: 3.25em;
     }
 
     .cut.stats.right {
