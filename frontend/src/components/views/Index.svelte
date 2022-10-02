@@ -6,6 +6,8 @@
 
     let currentDir
 
+    document.documentElement.classList.add('sl-theme-dark');
+
     onMount(async () => {
         currentDir = await GetCwd()
 

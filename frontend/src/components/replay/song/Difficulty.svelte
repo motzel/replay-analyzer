@@ -29,11 +29,3 @@
     <Tag custom={true} color="white" {bgColor}
          borderColor={bgColor}>{name} {!short && mode?.length && mode != 'Standard' ? `/ ${mode}` : ''}</Tag>
 {/if}
-
-<style>
-    sl-tag::part(base) {
-        color: var(--fg);
-        background-color: var(--bg);
-        border-color: var(--bg);
-    }
-</style>

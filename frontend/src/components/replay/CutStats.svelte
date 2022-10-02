@@ -97,7 +97,7 @@
         </header>
 
         <div class="grid">
-            <Grid {stats} {hand} {statType} withCounts={true}/>
+            <Grid {stats} {hand} {statType} {withCounts} />
         </div>
     </section>
 {/if}

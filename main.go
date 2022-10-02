@@ -18,6 +18,7 @@ import (
 )
 
 //go:embed frontend/dist
+//go:embed frontend/assets
 var assets embed.FS
 
 func main() {

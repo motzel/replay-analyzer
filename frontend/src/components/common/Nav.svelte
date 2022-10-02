@@ -1,5 +1,5 @@
 <script>
-    import logo from '../../assets/images/logo.png'
+    import logo from '../../../assets/images/logo.png'
     import ThemePicker from "./ThemePicker.svelte";
 </script>
 

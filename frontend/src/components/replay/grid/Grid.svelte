@@ -56,7 +56,7 @@
         gap: .25em;
     }
 
-    sl-tooltip, sl-tooltip::part(body), section .tooltip-content {
+    sl-tooltip, sl-tooltip::part(body) {
         font: inherit;
     }
 

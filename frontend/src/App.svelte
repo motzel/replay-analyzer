@@ -10,7 +10,7 @@
 
     let initialized = false;
 
-    setBasePath('/src/assets/shoelace/');
+    setBasePath('/assets/shoelace/');
 
     router.mode.memory();
 
