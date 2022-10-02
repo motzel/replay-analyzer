@@ -13,6 +13,7 @@
     $: stats = data?.stats
     $: walls = data?.walls
     $: pauses = data?.pauses
+    $: fullCombo = !stats?.total?.misses && !stats?.total?.badCuts && !stats?.total?.bombHits && !walls?.length
 </script>
 
 {#if info}
@@ -48,7 +49,7 @@
                         {/if}
                     </span>
 
-                    <Duration duration={info?.endTime} />
+                    <Duration duration={info?.endTime}/>
 
                     <HandsBadge label="Notes" tooltip="Number of notes" digits="0"
                                 total={stats?.total?.notes}
@@ -59,39 +60,50 @@
 
             <footer>
                 {#if stats}
-                    <HandsBadge label="Misses" tooltip="Number of missed notes" digits="0"
-                                total={stats?.total?.misses}
-                                left={stats?.left?.misses}
-                                right={stats?.right?.misses}/>
+                    {#if fullCombo}
+                        <Tag variant="success" tooltip="Full combo">FC</Tag>
+                    {:else}
+                        {#if stats?.total?.misses}
+                            <HandsBadge label="Misses" tooltip="Number of missed notes" digits="0"
+                                        total={stats?.total?.misses}
+                                        left={stats?.left?.misses}
+                                        right={stats?.right?.misses}/>
+                        {/if}
 
-                    <HandsBadge label="Bad cuts" tooltip="Number of bad cuts" digits="0"
-                                total={stats?.total?.badCuts}
-                                left={stats?.left?.badCuts}
-                                right={stats?.right?.badCuts}/>
+                        {#if stats?.total.badCuts}
+                            <HandsBadge label="Bad cuts" tooltip="Number of bad cuts" digits="0"
+                                        total={stats?.total?.badCuts}
+                                        left={stats?.left?.badCuts}
+                                        right={stats?.right?.badCuts}/>
+                        {/if}
 
-                    <HandsBadge label="Bomb hits" tooltip="Number of bomb hits" digits="0"
-                                total={stats?.total?.bombHits}
-                                left={stats?.left?.bombHits}
-                                right={stats?.right?.bombHits}/>
-
+                        {#if stats?.total?.bombHits}
+                            <HandsBadge label="Bomb hits" tooltip="Number of bomb hits" digits="0"
+                                        total={stats?.total?.bombHits}
+                                        left={stats?.left?.bombHits}
+                                        right={stats?.right?.bombHits}/>
+                        {/if}
+                    {/if}
                 {/if}
 
-                {#if walls}
+                {#if walls?.length}
                     <Badge label="Wall hits" tooltip="Number of wall hits" digits="0" value={walls?.length ?? 0}/>
                 {/if}
 
-                {#if pauses}
+                {#if pauses?.length}
                     <PausesBadge {pauses}/>
+                {/if}
+
+                {#if !fullCombo}
+                    <HandsBadge label="Combo" tooltip="Maximum combo achieved" digits="0"
+                                total={info?.maxCombo}
+                                left={info?.maxLeftCombo}
+                                right={info?.maxRightCombo}/>
                 {/if}
 
                 <Badge label="JD" tooltip="Jump Distance" digits="2" value={info?.jumpDistance}/>
 
-                <Badge label="Score" digits="0" value={info?.score}/>
-
-                <HandsBadge label="Combo" tooltip="Maximum combo achieved" digits="0"
-                            total={info?.maxCombo}
-                            left={info?.maxLeftCombo}
-                            right={info?.maxRightCombo}/>
+                <Badge label="Score" tooltip="Just a score" digits="0" value={info?.score}/>
             </footer>
         </div>
     </section>

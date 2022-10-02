@@ -6,7 +6,6 @@
     export let pauses;
     export let size = 'small'
 
-
     $: duration = (pauses ?? []).reduce((sum, p) => sum + (p?.duration ?? 0), 0)
     $: total = pauses?.length ?? 0
     $: durationFormatted = duration ? (duration >= 60 ? Math.floor(duration / 60) + 'm' : '') + padNumber(Math.round(duration % 60)) + 's' : '0s'
