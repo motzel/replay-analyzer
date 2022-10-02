@@ -5,6 +5,7 @@
     export let variant = 'neutral'
     export let tooltip = null
     export let noLeftPadding = false
+    export let noLeftBorder = false
     export let noRightPadding = false
     export let noRightBorder = false
     export let custom = false
@@ -88,6 +89,7 @@
             style:--padding-left={leftPadding}
             style:--padding-right={rightPadding}
             style:--left-margin={leftMargin}
+            style:--left-border-style={noLeftBorder ? 'none' : 'solid'}
             style:--right-border-style={noRightBorder ? 'none' : 'solid'}
     >
         <slot>
@@ -104,6 +106,7 @@
         padding-left: var(--padding-left);
         padding-right: var(--padding-right);
         margin-left: var(--left-margin);
+        border-left-style: var(--left-border-style);
         border-right-style: var(--right-border-style);
     }
 </style>

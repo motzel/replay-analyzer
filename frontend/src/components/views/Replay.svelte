@@ -1,18 +1,9 @@
 <script>
     import {router} from 'tinro';
     import replaysStore from '../../stores/replays.js'
-    import Acc from "../replay/Acc.svelte";
-    import HandsBadge from "../common/HandsBadge.svelte";
-    import Badge from "../common/Badge.svelte";
     import ReplayHeader from "../replay/ReplayHeader.svelte";
-    import PausesBadge from "../replay/PausesBadge.svelte";
-    import StatsBadge from "../common/StatsBadge.svelte";
-    import Grid from "../replay/Grid.svelte";
-    import HandRing from "../replay/HandRing.svelte";
-    import AccRing from "../replay/AccRing.svelte";
-    import Value from "../common/Value.svelte";
-    import MultiAccRing from "../replay/MultiAccRing.svelte";
     import SongHeader from "../replay/song/SongHeader.svelte";
+    import CutStats from "../replay/CutStats.svelte";
 
     export let filepath;
 
@@ -64,66 +55,7 @@
             <ReplayHeader info={data?.info}/>
             <SongHeader {data} />
 
-            <sl-radio-group label="Select a hand" name={hand} value="total" on:sl-change={e => hand = e?.target?.value}>
-                <sl-radio-button size="small" value="left">Left</sl-radio-button>
-                <sl-radio-button size="small" value="right">Right</sl-radio-button>
-                <sl-radio-button size="small" value="total">Total</sl-radio-button>
-            </sl-radio-group>
-
-            <sl-radio-group label="Select a stat type" name={statType} value="avg"
-                            on:sl-change={e => statType = e?.target?.value}>
-                <sl-radio-button size="small" value="min">Min</sl-radio-button>
-                <sl-radio-button size="small" value="avg">Average</sl-radio-button>
-                <sl-radio-button size="small" value="med">Median</sl-radio-button>
-                <sl-radio-button size="small" value="max">Max</sl-radio-button>
-            </sl-radio-group>
-
-            <Grid stats={data?.stats} {hand} {statType} withCounts={true}/>
-
-            <div>
-                <HandRing stats={data?.stats} key="beforeCut" {hand} {statType} withLabel={false}/>
-                <HandRing stats={data?.stats} key="accCut" {hand} {statType}/>
-                <HandRing stats={data?.stats} key="afterCut" {hand} {statType}/>
-                <HandRing stats={data?.stats} key="score" {hand} {statType}/>
-            </div>
-
-
-            {#each [
-                {name: 'Before', tooltip: 'Points for before swing', key: 'beforeCut', digits: 0, type: 'decimal'},
-                {name: 'Precision', tooltip: 'Points for precision', key: 'accCut', digits: 0, type: 'decimal'},
-                {name: 'After', tooltip: 'Points for after swing', key: 'afterCut', digits: 0, type: 'decimal'},
-                {name: 'Hit', tooltip: 'Total points', key: 'score', digits: 0, type: 'decimal'},
-                {name: 'PRE', tooltip: 'PRE swing', key: 'preSwing', digits: 2, type: 'percent'},
-                {name: 'POST', tooltip: 'POST swing', key: 'postSwing', digits: 2, type: 'percent'},
-                {
-                    name: 'TD',
-                    tooltip: 'Time dependence',
-                    key: 'timeDependence',
-                    digits: 2,
-                    type: 'decimal',
-                    reverse: true
-                },
-            ] as stat}
-                <div>
-                    <StatsBadge variant="default" label={`${stat.name} left`} tooltip={stat.tooltip ?? null}
-                                digits={stat.digits}
-                                type={stat.type} reverse={stat?.reverse ?? false}
-                                stat={data?.stats?.left?.[stat.key]}
-                    />
-
-                    <StatsBadge variant="neutral" label={`${stat.name} total`} tooltip={stat.tooltip ?? null}
-                                digits={stat.digits}
-                                type={stat.type} reverse={stat?.reverse ?? false}
-                                stat={data?.stats?.total?.[stat.key]}
-                    />
-
-                    <StatsBadge variant="default" label={`${stat.name} right`} tooltip={stat.tooltip ?? null}
-                                digits={stat.digits}
-                                type={stat.type} reverse={stat?.reverse ?? false}
-                                stat={data?.stats?.right?.[stat.key]}
-                    />
-                </div>
-            {/each}
+            <CutStats stats={data?.stats} withCounts={true} />
         </section>
     {:else }
         <p>Can not load replay file.</p>

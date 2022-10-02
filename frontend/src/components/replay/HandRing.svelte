@@ -33,7 +33,7 @@
                 break;
             case 'score':
                 maxValue = 115;
-                label = type === 'percent' ? 'Acc' : 'Hit';
+                label = type === 'percent' ? 'Acc' : 'Score';
                 break;
         }
 
