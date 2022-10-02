@@ -22,7 +22,6 @@
     <small class="tags">
         <Badge label="Height" tooltip="Player height" digits="2" value={info?.height}/>
         <Headset hmd={info?.hmd}/>
-        <Tag name={info?.trackingSystem} tooltip="Tracking system"/>
         <Badge tooltip="Game platform and version" label={capitalize(info?.platform)}>
             {info?.gameVersion}
         </Badge>
