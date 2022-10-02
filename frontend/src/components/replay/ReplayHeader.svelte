@@ -17,14 +17,6 @@
         <small>
             <Date date={info?.timeSet} sync={true}/>
         </small>
-
-        {#if info?.modifiers?.length}
-            <span class="mods">
-                {#each info.modifiers as mod}
-                    <Tag name={mod}/>
-                {/each}
-            </span>
-        {/if}
     </div>
 
     <small class="tags">

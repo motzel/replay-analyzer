@@ -4,6 +4,8 @@
     import HandsBadge from "../../common/HandsBadge.svelte";
     import Badge from "../../common/Badge.svelte";
     import PausesBadge from "../PausesBadge.svelte";
+    import Tag from "../../common/Tag.svelte";
+    import Duration from "../Duration.svelte";
 
     export let data
 
@@ -30,10 +32,24 @@
             </div>
 
             <div class="song">
-                <span class="name">{info?.songName}</span>
+                <span class="name">
+                    <span>{info?.songName}</span>
+                    <small class="mapper">{info?.mapper}</small>
+                </span>
                 <div>
-                    <span class="mapper">{info?.mapper}</span>
-                    <span class="diff"><Difficulty diff={info?.difficulty} mode={info?.mode}/></span>
+                    <span class="diff">
+                        <Difficulty diff={info?.difficulty} mode={info?.mode}/>
+                        {#if info?.modifiers?.length}
+                            <span class="mods">
+                                {#each info.modifiers as mod}
+                                    <Tag name={mod}/>
+                                {/each}
+                            </span>
+                        {/if}
+                    </span>
+
+                    <Duration duration={info?.endTime} />
+
                     <HandsBadge label="Notes" tooltip="Number of notes" digits="0"
                                 total={stats?.total?.notes}
                                 left={stats?.left?.notes}
@@ -146,6 +162,7 @@
 
     .mapper {
         color: var(--sl-color-neutral-600);
+        font-size: .6em;
     }
 
     footer {

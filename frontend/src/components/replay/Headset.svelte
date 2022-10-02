@@ -6,6 +6,6 @@
     $: name = hmd ?? null
 </script>
 
-{#if name}
-    <Tag tooltip="Headset">{name}</Tag>
+{#if name?.length}
+    <Tag tooltip="Headset">{name?.replace(/_/g, ' ')}</Tag>
 {/if}

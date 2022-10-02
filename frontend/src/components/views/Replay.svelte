@@ -53,9 +53,12 @@
     {:else if replay}
         <section class="replay">
             <ReplayHeader info={data?.info}/>
+
             <SongHeader {data} />
 
-            <CutStats stats={data?.stats} withCounts={true} />
+            <section class="stats">
+                <CutStats stats={data?.stats} withCounts={true} />
+            </section>
         </section>
     {:else }
         <p>Can not load replay file.</p>
@@ -73,6 +76,10 @@
 
     .replay :global(> *) {
         margin-bottom: .5rem;
+    }
+
+    .stats {
+        margin-top: 1rem;
     }
 
     .error {
