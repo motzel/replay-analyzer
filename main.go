@@ -18,7 +18,6 @@ import (
 )
 
 //go:embed frontend/dist
-//go:embed frontend/assets
 var assets embed.FS
 
 func main() {
@@ -168,8 +167,8 @@ func main() {
 	// Create application with options
 	err = wails.Run(&options.App{
 		Title:              "BL Replay Analyzer",
-		Width:              1024,
-		Height:             768,
+		Width:              876,
+		Height:             700,
 		MinWidth:           876,
 		MinHeight:          700,
 		Assets:             assets,
