@@ -96,21 +96,25 @@
             </sl-radio-group>
         </header>
 
-        <div class="grid">
+        <div class="grid position">
             <Grid {stats} {hand} {statType} {withCounts} />
+        </div>
+
+        <div class="grid direction">
+            <Grid type="direction" {stats} {hand} {statType} {withCounts} />
         </div>
     </section>
 {/if}
 
 <style>
     section {
-        display: grid;
+        display: inline-grid;
         grid-template-columns: repeat(5, max-content);
         grid-template-rows: repeat(4, max-content);
         grid-template-areas:
-        "shead shead shead shead ghead"
-        "lstats lring rring rstats grid"
-        "lalt   lalt  ralt  ralt   grid";
+        "shead shead shead shead ghead ghead"
+        "lstats lring rring rstats pgrid dgrid"
+        "lalt   lalt  ralt  ralt   pgrid dgrid";
         column-gap: .5em;
         row-gap: .5em;
     }
@@ -176,9 +180,16 @@
         grid-area: ralt;
     }
 
-
     .grid {
-        grid-area: grid;
         font-size: .875em;
+        margin-left: 1em;
+    }
+
+    .grid.direction {
+        grid-area: dgrid;
+    }
+
+    .grid.position {
+        grid-area: pgrid;
     }
 </style>
