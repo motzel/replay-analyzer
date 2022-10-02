@@ -53,7 +53,7 @@
 
 <style>
     :global(svg) {
-        font-size: 3.5em;
+        font-size: 4.5em;
         color: var(--sl-color-neutral-200);
         z-index: 0;
     }

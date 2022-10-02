@@ -16,11 +16,11 @@
     Pauses
 
     <Tag variant="total" noLeftPadding={true} noRightPadding={true} noRightBorder={true}>
-        <Tag tooltip="Total number of pauses" placement="bottom" variant="neutral" rightPadding="1.25rem" customSize={true}>
+        <Tag tooltip="Total number of pauses" placement="bottom" variant="neutral" rightPadding="1.25rem" customSize={true} hoist={true}>
             <Value value={total} digits="0"/>
         </Tag>
 
-        <Tag tooltip="Total pause time" placement="bottom" variant="neutral" leftMargin="-1rem" customSize={true}>
+        <Tag tooltip="Total pause time" placement="bottom" variant="neutral" leftMargin="-1rem" customSize={true} hoist={true}>
             {durationFormatted}
         </Tag>
     </Tag>

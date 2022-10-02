@@ -28,6 +28,7 @@
     </div>
 
     <small class="tags">
+        <Badge label="Height" tooltip="Player height" digits="2" value={info?.height}/>
         <Headset hmd={info?.hmd}/>
         <Tag name={info?.trackingSystem} tooltip="Tracking system"/>
         <Badge tooltip="Game platform and version" label={capitalize(info?.platform)}>
@@ -47,7 +48,7 @@
         gap: 1rem;
         line-height: 1;
         font-size: 2rem;
-        margin: 0 0 1rem 0;
+        margin: 0;
         padding: 0 0 .5rem 0;
         border-bottom: 1px solid var(--sl-color-neutral-300)
     }

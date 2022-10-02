@@ -3,7 +3,6 @@
     import replaysStore from '../../stores/replays.js'
     import Acc from "../replay/Acc.svelte";
     import HandsBadge from "../common/HandsBadge.svelte";
-    import Song from "../replay/song/Song.svelte";
     import Badge from "../common/Badge.svelte";
     import ReplayHeader from "../replay/ReplayHeader.svelte";
     import PausesBadge from "../replay/PausesBadge.svelte";
@@ -12,6 +11,8 @@
     import HandRing from "../replay/HandRing.svelte";
     import AccRing from "../replay/AccRing.svelte";
     import Value from "../common/Value.svelte";
+    import MultiAccRing from "../replay/MultiAccRing.svelte";
+    import SongHeader from "../replay/song/SongHeader.svelte";
 
     export let filepath;
 
@@ -61,64 +62,31 @@
     {:else if replay}
         <section class="replay">
             <ReplayHeader info={data?.info}/>
+            <SongHeader {data} />
 
-            <Song info={data?.info}/>
+            <sl-radio-group label="Select a hand" name={hand} value="total" on:sl-change={e => hand = e?.target?.value}>
+                <sl-radio-button size="small" value="left">Left</sl-radio-button>
+                <sl-radio-button size="small" value="right">Right</sl-radio-button>
+                <sl-radio-button size="small" value="total">Total</sl-radio-button>
+            </sl-radio-group>
 
-            <AccRing value={data?.info?.accuracy ? data.info.accuracy / 100 : null} label="Accuracy">
-                <svelte:fragment slot="value" let:value>
-                    <Value {value} type="percent"/>
-                </svelte:fragment>
+            <sl-radio-group label="Select a stat type" name={statType} value="avg"
+                            on:sl-change={e => statType = e?.target?.value}>
+                <sl-radio-button size="small" value="min">Min</sl-radio-button>
+                <sl-radio-button size="small" value="avg">Average</sl-radio-button>
+                <sl-radio-button size="small" value="med">Median</sl-radio-button>
+                <sl-radio-button size="small" value="max">Max</sl-radio-button>
+            </sl-radio-group>
 
-                <svelte:fragment slot="tooltip">
-                    Map accuracy
-                </svelte:fragment>
-            </AccRing>
+            <Grid stats={data?.stats} {hand} {statType} withCounts={true}/>
 
-            <AccRing value={data?.info?.fcAccuracy ? data.info.fcAccuracy / 100 : null} label="FC Accuracy"
-                     color="green">
-                <svelte:fragment slot="value" let:value>
-                    <Value {value} type="percent"/>
-                </svelte:fragment>
+            <div>
+                <HandRing stats={data?.stats} key="beforeCut" {hand} {statType} withLabel={false}/>
+                <HandRing stats={data?.stats} key="accCut" {hand} {statType}/>
+                <HandRing stats={data?.stats} key="afterCut" {hand} {statType}/>
+                <HandRing stats={data?.stats} key="score" {hand} {statType}/>
+            </div>
 
-                <svelte:fragment slot="tooltip">
-                    Full Combo Accuracy (predicted scores for all misses)
-                </svelte:fragment>
-            </AccRing>
-
-            <Badge label="Score" digits="0" value={data?.info?.score}/>
-
-            <Badge label="Height" digits="2" value={data?.info?.height}/>
-
-            <Badge label="JD" tooltip="Jump Distance" digits="2" value={data?.info?.jumpDistance}/>
-
-            <PausesBadge pauses={data?.pauses}/>
-
-            <HandsBadge label="Notes" tooltip="Number of notes" digits="0"
-                        total={data?.stats?.total?.notes}
-                        left={data?.stats?.left?.notes}
-                        right={data?.stats?.right?.notes}/>
-
-            <HandsBadge label="Combo" tooltip="Maximum combo achieved" digits="0"
-                        total={data?.info?.maxCombo}
-                        left={data?.info?.maxLeftCombo}
-                        right={data?.info?.maxRightCombo}/>
-
-            <HandsBadge label="Misses" tooltip="Number of missed notes" digits="0"
-                        total={data?.stats?.total?.misses}
-                        left={data?.stats?.left?.misses}
-                        right={data?.stats?.right?.misses}/>
-
-            <HandsBadge label="Bad cuts" tooltip="Number of bad cuts" digits="0"
-                        total={data?.stats?.total?.badCuts}
-                        left={data?.stats?.left?.badCuts}
-                        right={data?.stats?.right?.badCuts}/>
-
-            <HandsBadge label="Bomb hits" tooltip="Number of bomb hits" digits="0"
-                        total={data?.stats?.total?.bombHits}
-                        left={data?.stats?.left?.bombHits}
-                        right={data?.stats?.right?.bombHits}/>
-
-            <Badge label="Wall hits" digits="0" value={data?.walls?.length ?? 0}/>
 
             {#each [
                 {name: 'Before', tooltip: 'Points for before swing', key: 'beforeCut', digits: 0, type: 'decimal'},
@@ -156,29 +124,6 @@
                     />
                 </div>
             {/each}
-
-            <sl-radio-group label="Select a hand" name={hand} value="total" on:sl-change={e => hand = e?.target?.value}>
-                <sl-radio-button size="small" value="left">Left</sl-radio-button>
-                <sl-radio-button size="small" value="right">Right</sl-radio-button>
-                <sl-radio-button size="small" value="total">Total</sl-radio-button>
-            </sl-radio-group>
-
-            <sl-radio-group label="Select a stat type" name={statType} value="avg"
-                            on:sl-change={e => statType = e?.target?.value}>
-                <sl-radio-button size="small" value="min">Min</sl-radio-button>
-                <sl-radio-button size="small" value="avg">Average</sl-radio-button>
-                <sl-radio-button size="small" value="med">Median</sl-radio-button>
-                <sl-radio-button size="small" value="max">Max</sl-radio-button>
-            </sl-radio-group>
-
-            <Grid stats={data?.stats} {hand} {statType} withCounts={true}/>
-
-            <div>
-                <HandRing stats={data?.stats} key="beforeCut" {hand} {statType} withLabel={false}/>
-                <HandRing stats={data?.stats} key="accCut" {hand} {statType}/>
-                <HandRing stats={data?.stats} key="afterCut" {hand} {statType}/>
-                <HandRing stats={data?.stats} key="score" {hand} {statType}/>
-            </div>
         </section>
     {:else }
         <p>Can not load replay file.</p>

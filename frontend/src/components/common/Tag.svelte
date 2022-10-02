@@ -17,17 +17,19 @@
     export let rightPadding = '.5rem'
     export let leftMargin = '0'
 
+    export let hoist = false;
+
     function updateStyle(variant) {
         switch (variant) {
             case 'red-saber':
-                color = 'var(--sl-color-red-800)'
-                bgColor = 'var(--sl-color-red-50)'
+                color = '#ddd'
+                bgColor = 'var(--red-saber)'
                 borderColor = 'var(--sl-color-red-200)'
                 break;
 
             case 'blue-saber':
-                color = 'var(--sl-color-blue-800)'
-                bgColor = 'var(--sl-color-blue-50)'
+                color = '#ddd'
+                bgColor = 'var(--blue-saber)'
                 borderColor = 'var(--sl-color-blue-200)'
                 break;
 
@@ -78,7 +80,7 @@
     $: if (!custom) updateStyle(variant)
 </script>
 
-<sl-tooltip content={tooltip} {placement} disabled={!tooltip ? true : null}>
+<sl-tooltip content={tooltip} {placement} disabled={!tooltip ? true : null} {hoist}>
     <sl-tag {size} pill
             style:--color={color}
             style:--bg-color={bgColor}

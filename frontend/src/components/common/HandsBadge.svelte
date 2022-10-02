@@ -15,16 +15,24 @@
     {label}
 
     <Tag variant="total" noLeftPadding={true} noRightPadding={true}>
-        <Tag tooltip="Total" placement="bottom" variant="neutral" rightPadding="1.25rem" customSize={true}>
+        <span class="total">
+        <Tag tooltip="Total" placement="bottom" variant="neutral" rightPadding="1.25rem" customSize={true} hoist={true}>
             <Value value={total} {digits}/>
         </Tag>
+            </span>
 
-        <Tag tooltip="Left hand" placement="bottom" variant="red-saber" rightPadding="1rem" leftMargin="-1rem" customSize={true}>
+        <Tag tooltip="Left hand" placement="bottom" variant="red-saber" rightPadding="1rem" leftMargin="-1rem" customSize={true} hoist={true}>
             <Value value={left} {digits}/>
         </Tag>
 
-        <Tag tooltip="Right hand" placement="bottom" variant="blue-saber" leftMargin="-1rem" >
+        <Tag tooltip="Right hand" placement="bottom" variant="blue-saber" leftMargin="-1rem" hoist={true}>
             <Value value={right} {digits}/>
         </Tag>
     </Tag>
 </Tag>
+
+<style>
+    .total {
+        font-weight: bold;
+    }
+</style>
