@@ -32,7 +32,7 @@
                                 <Value value={value} {digits}/>
 
                                 {#if withCounts}
-                                    <small>(<Value value={count} digits={0} />)</small>
+                                    <small class="count">(<Value value={count} digits={0} />)</small>
                                 {/if}
                             {/if}
                         </slot>
@@ -93,5 +93,9 @@
         display: block;
         font-size: .65em;
         margin-top: .25em;
+    }
+
+    small.count {
+        font-weight: normal;
     }
 </style>
