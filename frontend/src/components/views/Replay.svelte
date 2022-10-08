@@ -4,6 +4,7 @@
     import ReplayHeader from "../replay/ReplayHeader.svelte";
     import SongHeader from "../replay/song/SongHeader.svelte";
     import CutStats from "../replay/CutStats.svelte";
+    import MapChart from "../replay/chart/MapChart.svelte";
 
     export let filepath;
 
@@ -59,6 +60,8 @@
             <section class="stats">
                 <CutStats stats={data?.stats} withCounts={true} />
             </section>
+
+            <MapChart replay={data} />
         </section>
     {:else }
         <p>Can not load replay file.</p>
