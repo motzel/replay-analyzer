@@ -1,6 +1,4 @@
-// TODO:
-const getCurrentLocale = () => 'pl-PL'
-
+const getCurrentLocale = () => navigator?.language ?? 'en'
 
 export function formatTime(time) {
 	if (!Number.isFinite(time)) return null;
