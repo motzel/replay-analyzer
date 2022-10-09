@@ -17,6 +17,7 @@
                 options,
             });
         } else {
+            chart.options = options;
             chart.data = {datasets};
             chart.update();
         }

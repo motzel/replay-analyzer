@@ -1,6 +1,7 @@
 <script>
     import {tick} from "svelte";
     import Chart from "./Chart.svelte";
+    import theme from '../../../stores/theme.js'
     import {formatNumber, formatTime} from "../../../utils/format.js";
     import Value from "../../common/Value.svelte";
     import Badge from "../../common/Badge.svelte";
@@ -83,15 +84,18 @@
                 if (Number.isFinite(event?.accCut) && Number.isFinite(event?.beforeCut) && Number.isFinite(event?.afterCut))
                     event.score = event.beforeCut + event.accCut + event.afterCut
 
+                // TODO: add filtering
+                const shouldBeFilteredOut = false; //Math.random() > 0.5;
+
                 acc.acc.push({
                     x: event.eventTime,
-                    y: event.accuracy,
+                    y: shouldBeFilteredOut ? null : event.accuracy,
                     ...event
                 })
 
                 acc.fcAcc.push({
                     x: event.eventTime,
-                    y: event.fcAccuracy,
+                    y: shouldBeFilteredOut ? null : event.fcAccuracy,
                     ...event
                 })
 
@@ -213,7 +217,7 @@
                         display: false,
                         position: 'top',
                         labels: {
-                            color: 'white',
+                            color: $theme === 'light' ? 'black' : 'white',
                         }
                     },
                     title: {
@@ -239,7 +243,7 @@
                         title: {
                             display: true,
                             text: 'Time',
-                            color: 'white',
+                            color: $theme === 'light' ? 'black' : 'white',
                         },
                         ticks: {
                             callback: val => val === Math.floor(val) ? formatTime(val) : null,
@@ -254,7 +258,7 @@
                                     };
                                 }
                             },
-                            color: 'white',
+                            color: $theme === 'light' ? 'black' : 'white',
                         },
 
                         grid: {
@@ -267,12 +271,12 @@
                         title: {
                             display: true,
                             text: 'Acc',
-                            color: 'white',
+                            color: $theme === 'light' ? 'black' : 'white',
                         },
                         ticks: {
                             callback: val => (val === Math.floor(val) ? val + '%' : null),
                             precision: 0,
-                            color: 'white',
+                            color: $theme === 'light' ? 'black' : 'white',
                         },
                         min: minValue,
                         max: maxValue,
@@ -285,7 +289,7 @@
         }
     }
 
-    $: ({datasets, options} = getAccChartDataFromReplay(replay) ?? {})
+    $: ({datasets, options} = getAccChartDataFromReplay(replay, $theme) ?? {})
 </script>
 
 <Chart {datasets} {options}>
@@ -376,9 +380,8 @@
 <style>
     .tooltip {
         position: fixed;
-        background-color: rgba(0, 0, 0, 0.85);
+        background-color: var(--sl-color-neutral-400);
         border-radius: 3px;
-        color: white;
         opacity: 1;
         pointer-events: none;
         transform: translate(-50%, 0);
@@ -390,9 +393,14 @@
         z-index: 10;
     }
 
+    :global(.sl-theme-dark) .tooltip {
+        background-color: rgba(0, 0, 0, 0.85);
+    }
+
     header {
         font-size: 1rem;
         text-align: center;
+        color: white;
     }
 
     header span {
@@ -430,9 +438,13 @@
         gap: .5rem;
     }
 
-    .stats > div:not(:last-of-type) {
+    .stats > div {
         margin-bottom: .25rem;
         text-align: right;
+    }
+
+    .stats > div:not(:last-of-type) {
+        margin-bottom: .25rem;
     }
 
     .grid {

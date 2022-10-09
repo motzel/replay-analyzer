@@ -35,9 +35,7 @@
 
             {#if block?.type !== 'hit' && idx === getPositionIdx(block?.lineLayer, block?.lineIdx)}
                 <small class="count">
-                    (
-                    <Value value={count} digits={0}/>
-                    )
+                    (<Value value={count} digits={0}/>)
                 </small>
             {/if}
         </svelte:fragment>
@@ -56,7 +54,7 @@
 
 <style>
     .count {
-        color: var(--sl-color-neutral-400);
+        color: var(--sl-color-neutral-500);
     }
 
     :global(svg) {
