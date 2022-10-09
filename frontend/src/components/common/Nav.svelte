@@ -15,7 +15,7 @@
     </section>
 
     <section class="right">
-        <sl-tooltip content="Settings not implemented yet">
+        <sl-tooltip content="Settings not implemented yet" placement="bottom">
             <sl-icon-button class="settings" name="gear" label="Settings"></sl-icon-button>
         </sl-tooltip>
 
