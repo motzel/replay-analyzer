@@ -13,7 +13,6 @@
     let error
 
     let hand = "total"
-    let statType = "avg"
 
     const hash = router.location.hash.get()
 
@@ -58,10 +57,10 @@
             <SongHeader {data} />
 
             <section class="stats">
-                <CutStats stats={data?.stats} withCounts={true} />
+                <CutStats stats={data?.stats} withCounts={true} bind:hand />
             </section>
 
-            <MapChart replay={data} />
+            <MapChart replay={data} {hand} />
         </section>
     {:else }
         <p>Can not load replay file.</p>

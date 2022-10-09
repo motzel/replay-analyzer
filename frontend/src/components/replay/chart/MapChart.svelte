@@ -7,11 +7,37 @@
     import Badge from "../../common/Badge.svelte";
     import Tag from "../../common/Tag.svelte";
     import BlockGrid from "../grid/BlockGrid.svelte";
+    import CheckboxGroup from "../../common/CheckboxGroup.svelte";
 
     export let replay
+    export let hand = "total"
+
+    const FILTER_TYPES = [
+        {value: 'hit', label: 'Hit'},
+        {value: 'miss', label: 'Miss'},
+        {value: 'badCut', label: 'Bad cut'},
+        {value: 'bombHit', label: 'Bomb hit'},
+        {value: 'wallHit', label: 'Wall hit'},
+        // {value: 'pause', label: 'Pause'},
+        // {
+        //     value: 'pause',
+        //     itemValue: 'mark',
+        //     label: 'Pause',
+        //     items: [
+        //         {value: 'no', label: 'No pauses'},
+        //         {value: 'mark', label: 'Pause mark'},
+        //         {value: 'time', label: 'Pause time'},
+        //     ]
+        // },
+    ]
 
     let tooltipEl;
     let tooltipData;
+
+    let filters = {
+        type: FILTER_TYPES.map(t => t?.items?.length ? `${t?.value}:${t?.itemValue}` : t?.value),
+        hand: "total",
+    }
 
     const tooltipHandler = async ctx => {
         tooltipData = null;
@@ -67,7 +93,19 @@
         }
     }
 
-    function getAccChartDataFromReplay(replay) {
+    const shouldEventBeIncluded = (event, filters) => {
+        if (!event) return false;
+
+        let val = filters.type.includes(event.type)
+
+        if (val && hand !== 'total' && ['hit', 'miss', 'badCut'].includes(event.type)) {
+            val &&= ((event.colorType === 0 && hand === 'left') || (event.colorType === 1 && hand === 'right'))
+        }
+
+        return val;
+    }
+
+    function getAccChartDataFromReplay(replay, filters) {
         if (!replay?.notes) return null;
 
         const skipped = (ctx, value) => (ctx.p0.skip || ctx.p1.skip ? value : undefined);
@@ -84,18 +122,17 @@
                 if (Number.isFinite(event?.accCut) && Number.isFinite(event?.beforeCut) && Number.isFinite(event?.afterCut))
                     event.score = event.beforeCut + event.accCut + event.afterCut
 
-                // TODO: add filtering
-                const shouldBeFilteredOut = false; //Math.random() > 0.5;
+                const shouldBeIncluded = shouldEventBeIncluded(event, filters);
 
                 acc.acc.push({
                     x: event.eventTime,
-                    y: shouldBeFilteredOut ? null : event.accuracy,
+                    y: !shouldBeIncluded ? null : event.accuracy,
                     ...event
                 })
 
                 acc.fcAcc.push({
                     x: event.eventTime,
-                    y: shouldBeFilteredOut ? null : event.fcAccuracy,
+                    y: !shouldBeIncluded ? null : event.fcAccuracy,
                     ...event
                 })
 
@@ -121,8 +158,6 @@
                     fill: false,
                     color: 'white',
                     borderWidth: 2,
-                    hitRadius: 3,
-                    hoverRadius: 3,
                     cubicInterpolationMode: 'monotone',
                     tension: 0.4,
                     label: 'Acc',
@@ -162,6 +197,11 @@
                         if (ctx?.raw?.type === 'hit') return 0;
 
                         return 6;
+                    },
+                    hoverRadius: ctx => {
+                        if (ctx?.raw?.type === 'hit') return 3;
+
+                        return 10;
                     },
                     pointStyle: ctx => {
                         if (ctx?.raw?.type === 'hit') return null;
@@ -209,8 +249,9 @@
                     },
                 },
                 interaction: {
-                    mode: 'index',
                     intersect: false,
+                    mode: 'index',
+                    axis: 'xy',
                 },
                 plugins: {
                     legend: {
@@ -225,7 +266,7 @@
                     },
                     tooltip: {
                         enabled: false,
-                        position: 'nearest',
+                        // position: 'nearest',
                         callbacks: {
                             title: function (ctx) {
                                 if (!ctx?.[0]?.parsed?.x) return '';
@@ -289,8 +330,13 @@
         }
     }
 
-    $: ({datasets, options} = getAccChartDataFromReplay(replay, $theme) ?? {})
+    $: filters.hand = hand
+    $: ({datasets, options} = getAccChartDataFromReplay(replay, filters, $theme) ?? {})
 </script>
+
+<aside>
+    <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type}/>
+</aside>
 
 <Chart {datasets} {options}>
     <svelte:fragment slot="tooltip">
@@ -368,7 +414,7 @@
                         </div>
 
                         <div class="grid">
-                            <BlockGrid block={event} />
+                            <BlockGrid block={event}/>
                         </div>
                     </section>
                 {/if}
@@ -378,6 +424,10 @@
 </Chart>
 
 <style>
+    aside {
+        margin-top: 1rem;
+    }
+
     .tooltip {
         position: fixed;
         background-color: var(--sl-color-neutral-400);

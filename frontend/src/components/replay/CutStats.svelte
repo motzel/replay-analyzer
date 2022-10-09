@@ -1,4 +1,5 @@
 <script>
+    import {createEventDispatcher} from "svelte";
     import Grid from "./Grid.svelte";
     import HandRing from "./HandRing.svelte";
     import Tag from "../common/Tag.svelte";
@@ -6,10 +7,18 @@
     import Badge from "../common/Badge.svelte";
 
     export let stats
+    export let hand = "total"
     export let withCounts = true
 
+    const dispatch = createEventDispatcher()
+
     let statType = "avg"
-    let hand = "total"
+
+    function onHandChange(e) {
+        hand = e?.target?.value
+
+        dispatch('hand-change', hand)
+    }
 </script>
 
 {#if stats}
@@ -89,7 +98,7 @@
         </div>
 
         <header class="grid">
-            <sl-radio-group label="Select a hand" name={hand} value="total" on:sl-change={e => hand = e?.target?.value}>
+            <sl-radio-group label="Select a hand" name={hand} value={hand} on:sl-change={onHandChange}>
                 <sl-radio-button size="small" value="total">Both</sl-radio-button>
                 <sl-radio-button size="small" value="left">Left</sl-radio-button>
                 <sl-radio-button size="small" value="right">Right</sl-radio-button>
