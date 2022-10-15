@@ -1,6 +1,6 @@
 <script>
     import {formatNumber} from "../../utils/format.js";
-    import Range from "../common/Range.svelte";
+    import Range from "./Range.svelte";
 
     export let label
     export let values=[0, 100]

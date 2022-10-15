@@ -17,7 +17,7 @@
       style:--range-handle-focus="var(--sl-color-primary-500)"
 >
     <RangeSlider range {min} {max} {step} {pipstep} bind:values float {pips} pushy={true} {suffix}
-                 first="label" last="label"/>
+                 first={pips ? "label" : false} last={pips ? "label" : false}/>
 </span>
 
 <style>

@@ -9,7 +9,7 @@
     import Tag from "../../common/Tag.svelte";
     import BlockGrid from "../grid/BlockGrid.svelte";
     import CheckboxGroup from "../../common/CheckboxGroup.svelte";
-    import SingleFilterDropdown from "../SingleFilterDropdown.svelte";
+    import ScoreFilterDropdown from "./ScoreFilterDropdown.svelte";
 
     export let replay
     export let hand = "total"
@@ -169,7 +169,6 @@
 
                 if (pauseType === 'block' && currentPausesIdx < pauses.length && pauses[currentPausesIdx].time <= event.eventTime) {
                     totalPauseOffset += pauses[currentPausesIdx].duration ?? 0
-
 
                     acc.acc.push({
                         x: pauses[currentPausesIdx].time,
@@ -406,21 +405,8 @@
     <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type}/>
 
     <div>
-        <SingleFilterDropdown label="Score" bind:values={filters.score} min={0} max={115} step={1} pipstep={5}/>
-        <SingleFilterDropdown label="Before" bind:values={filters.before} min={0} max={70} step={1} pipstep={5}/>
-        <SingleFilterDropdown label="Precision" bind:values={filters.accCut} min={0} max={15} step={1} pipstep={1}/>
-        <SingleFilterDropdown label="After" bind:values={filters.after} min={0} max={30} step={1} pipstep={1}/>
+        <ScoreFilterDropdown bind:filters />
     </div>
-
-    <div>
-        <SingleFilterDropdown label="TD" bind:values={filters.timeDependence} min={0} max={1} step={0.01} pipstep={10}
-                              digits={2}/>
-        <SingleFilterDropdown label="PRE" bind:values={filters.beforeRating} min={0} max={300} step={1} pipstep={25}
-                              suffix="%"/>
-        <SingleFilterDropdown label="POST" bind:values={filters.afterRating} min={0} max={300} step={1} pipstep={25}
-                              suffix="%"/>
-    </div>
-
 </aside>
 
 <Chart {datasets} {options}>
@@ -516,7 +502,7 @@
     }
 
     aside > * {
-        margin-left: 1rem;
+        margin-left: .5rem;
     }
 
     .tooltip {
