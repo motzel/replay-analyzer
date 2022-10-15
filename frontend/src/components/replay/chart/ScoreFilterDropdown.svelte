@@ -4,6 +4,16 @@
     import FilterIcon from "../../common/FilterIcon.svelte";
 
     export let filters
+
+    function resetAll() {
+        filters.score = [0, 115];
+        filters.before = [0, 70];
+        filters.accCut = [0, 15];
+        filters.after = [0, 30];
+        filters.timeDependence = [0, 1];
+        filters.beforeRating = [0, 300];
+        filters.afterRating = [0, 300];
+    }
 </script>
 
 {#if filters}
@@ -36,6 +46,8 @@
             </div>
 
             <div>
+                <label class="reset" on:click={resetAll}>Reset all</label>
+
                 <label>
                     TD: {formatNumber(filters.timeDependence[0], 2)} -{formatNumber(filters.timeDependence[1], 2)}
                 </label>
@@ -80,5 +92,16 @@
     label {
         display: block;
         text-align: left;
+    }
+
+    .reset {
+        margin-bottom: 2.25rem;
+        text-align: right;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .reset:hover {
+        color: var(--sl-color-neutral-600);
     }
 </style>
