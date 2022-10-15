@@ -1,5 +1,6 @@
 <script>
     import Chart from 'chart.js/auto';
+    import regionsPlugin from './utils/regions-plugin';
 
     export let datasets;
     export let options;
@@ -15,6 +16,7 @@
             chart = new Chart(canvas, {
                 data: {datasets},
                 options,
+                plugins: [regionsPlugin],
             });
         } else {
             chart.options = options;

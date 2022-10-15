@@ -41,8 +41,6 @@
     $: loadReplay(path)
 
     $: data = replayFull ?? replay
-
-    $: console.warn(data)
 </script>
 
 <article>

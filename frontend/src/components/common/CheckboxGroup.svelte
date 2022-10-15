@@ -18,9 +18,17 @@
         dispatch('change', value)
     }
 
-    // TODO:
     function onDropdownChanged(item, e) {
-        console.log(item, e?.detail?.item?.value)
+        if (!item?.value || !e?.detail?.item?.value) return;
+
+        value = value
+                ?.filter(v => !v.startsWith(`${item.value}:`))
+                ?.concat([`${item.value}:${e.detail.item.value}`])
+            ?? []
+        item.itemValue = e.detail.item.value;
+        items = items;
+
+        dispatch('change', value)
     }
 </script>
 
@@ -33,8 +41,11 @@
                            on:click={() => toggle(item)}
                 >{item?.label ?? item?.value}</sl-button>
             {:else}
+                {@const selectedItem = item.items.find(i => i.value === item.itemValue)}
                 <sl-dropdown on:sl-select={e => onDropdownChanged(item, e)}>
-                    <sl-button {size} slot="trigger" caret>Dropdown</sl-button>
+                    <sl-button class:active={!selectedItem?.notActive} variant={selectedItem?.notActive ? "default" : variant} {size} slot="trigger" caret>
+                        {selectedItem?.label ?? selectedItem?.value ?? item?.label ?? item?.value}
+                    </sl-button>
                     <sl-menu>
                         {#each item.items as subItem (subItem.value)}
                             <sl-menu-item value={subItem.value} checked={item?.itemValue === subItem.value}>{subItem.label}</sl-menu-item>

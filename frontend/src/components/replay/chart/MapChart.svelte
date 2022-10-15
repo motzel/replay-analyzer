@@ -23,17 +23,16 @@
         {value: 'badCut', label: 'Bad cut'},
         {value: 'bombHit', label: 'Bomb hit'},
         {value: 'wallHit', label: 'Wall hit'},
-        // {value: 'pause', label: 'Pause'},
-        // {
-        //     value: 'pause',
-        //     itemValue: 'mark',
-        //     label: 'Pause',
-        //     items: [
-        //         {value: 'no', label: 'No pauses'},
-        //         {value: 'mark', label: 'Pause mark'},
-        //         {value: 'time', label: 'Pause time'},
-        //     ]
-        // },
+        {
+            value: 'pause',
+            itemValue: 'marker',
+            label: 'Pause',
+            items: [
+                {value: 'no', label: 'No pauses', notActive: true},
+                {value: 'marker', label: 'Pause markers'},
+                {value: 'block', label: 'Pause blocks'},
+            ]
+        },
     ]
 
     let tooltipEl;
@@ -91,9 +90,9 @@
                 left -= (ttRect.width / 2) - (chartRect.right - chartRect.left - tooltip.caretX)
             }
 
-            let top = chartRect.top + tooltip.caretY + 6;
-            if (window.innerHeight < top + ttRect.height) {
-                top = window.innerHeight - ttRect.height - 6
+            let top = chartRect.top + tooltip.caretY - ttRect.height - 6;
+            if (window.innerHeight < top) {
+                top = window.innerHeight - 6
             }
 
             tooltipEl.style.opacity = 1;
@@ -135,6 +134,27 @@
 
         let minValue = null, maxValue = null
 
+        const pauseType = filters.type.find(f => f.startsWith('pause:'))?.substr('pause:'.length) ?? 'no'
+
+        const pauses = (replay?.pauses ?? []).sort((a, b) => a?.time - b?.time)
+        let currentPausesIdx = 0
+        let totalPauseOffset = 0
+
+        let pauseRegions = (pauseType !== 'no' ? pauses : [])
+            .map(p => ({
+                min: p?.time,
+                max: p?.time + (pauseType === 'block' ? p?.duration : 0),
+                color: pauseType === 'block'
+                    ? ($theme === 'dark' ? '#333' : '#eee')
+                    : 'gray',
+                labelColor: pauseType === 'block' || $theme === 'dark' ? 'gray' : '#333',
+                labelRotate: pauseType === 'marker',
+                label: 'Pause',
+                type: 'vertical',
+                position: {vertical: 'top', horizontal: pauseType === 'block' ? 'right' : 'left'},
+            }))
+            .filter(p => Number.isFinite(p.min))
+
         const allEvents = replay.notes?.map(n => ({...n, type: 'hit', typeName: null}))
             .concat((replay?.misses ?? []).map(m => ({...m, type: 'miss', typeName: 'Miss'})))
             .concat((replay?.badCuts ?? []).map(b => ({...b, type: 'badCut', typeName: 'Bad cut'})))
@@ -147,14 +167,31 @@
 
                 const shouldBeIncluded = shouldEventBeIncluded(event, filters);
 
+                if (pauseType === 'block' && currentPausesIdx < pauses.length && pauses[currentPausesIdx].time <= event.eventTime) {
+                    totalPauseOffset += pauses[currentPausesIdx].duration ?? 0
+
+
+                    acc.acc.push({
+                        x: pauses[currentPausesIdx].time,
+                        y: null,
+                    })
+
+                    acc.fcAcc.push({
+                        x: pauses[currentPausesIdx].time,
+                        y: null,
+                    })
+
+                    currentPausesIdx++
+                }
+
                 acc.acc.push({
-                    x: event.eventTime,
+                    x: event.eventTime + totalPauseOffset,
                     y: !shouldBeIncluded ? null : event.accuracy,
                     ...event
                 })
 
                 acc.fcAcc.push({
-                    x: event.eventTime,
+                    x: event.eventTime + totalPauseOffset,
                     y: !shouldBeIncluded ? null : event.fcAccuracy,
                     ...event
                 })
@@ -282,7 +319,7 @@
             },
             plugins: {
                 legend: {
-                    display: false,
+                    display: true,
                     position: 'top',
                     labels: {
                         color: $theme === 'light' ? 'black' : 'white',
@@ -302,7 +339,10 @@
                         },
                     },
                     external: tooltipHandler,
-                }
+                },
+                regions: {
+                    regions: pauseRegions,
+                },
             },
             scales: {
                 xAxis: {
@@ -373,9 +413,12 @@
     </div>
 
     <div>
-        <SingleFilterDropdown label="TD" bind:values={filters.timeDependence} min={0} max={1} step={0.01} pipstep={10} digits={2}/>
-        <SingleFilterDropdown label="PRE" bind:values={filters.beforeRating} min={0} max={300} step={1} pipstep={25} suffix="%"/>
-        <SingleFilterDropdown label="POST" bind:values={filters.afterRating} min={0} max={300} step={1} pipstep={25} suffix="%"/>
+        <SingleFilterDropdown label="TD" bind:values={filters.timeDependence} min={0} max={1} step={0.01} pipstep={10}
+                              digits={2}/>
+        <SingleFilterDropdown label="PRE" bind:values={filters.beforeRating} min={0} max={300} step={1} pipstep={25}
+                              suffix="%"/>
+        <SingleFilterDropdown label="POST" bind:values={filters.afterRating} min={0} max={300} step={1} pipstep={25}
+                              suffix="%"/>
     </div>
 
 </aside>
