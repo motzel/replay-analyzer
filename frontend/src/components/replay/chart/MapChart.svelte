@@ -3,14 +3,19 @@
     import Chart from "./Chart.svelte";
     import theme from '../../../stores/theme.js'
     import {formatNumber, formatTime} from "../../../utils/format.js";
+    import {debounce} from "../../../debounce.js";
     import Value from "../../common/Value.svelte";
     import Badge from "../../common/Badge.svelte";
     import Tag from "../../common/Tag.svelte";
     import BlockGrid from "../grid/BlockGrid.svelte";
     import CheckboxGroup from "../../common/CheckboxGroup.svelte";
+    import SingleFilterDropdown from "../SingleFilterDropdown.svelte";
 
     export let replay
     export let hand = "total"
+
+    let datasets = null
+    let options = null
 
     const FILTER_TYPES = [
         {value: 'hit', label: 'Hit'},
@@ -37,6 +42,13 @@
     let filters = {
         type: FILTER_TYPES.map(t => t?.items?.length ? `${t?.value}:${t?.itemValue}` : t?.value),
         hand: "total",
+        score: [0, 115],
+        before: [0, 70],
+        accCut: [0, 15],
+        after: [0, 30],
+        timeDependence: [0, 1],
+        beforeRating: [0, 300],
+        afterRating: [0, 300],
     }
 
     const tooltipHandler = async ctx => {
@@ -102,6 +114,17 @@
             val &&= ((event.colorType === 0 && hand === 'left') || (event.colorType === 1 && hand === 'right'))
         }
 
+        if (event.type === 'hit') {
+            val &&= event.score >= filters.score[0] && event.score <= filters.score[1]
+            val &&= event.beforeCut >= filters.before[0] && event.beforeCut <= filters.before[1]
+            val &&= event.accCut >= filters.accCut[0] && event.accCut <= filters.accCut[1]
+            val &&= event.afterCut >= filters.after[0] && event.afterCut <= filters.after[1]
+
+            val &&= event.timeDependence >= filters.timeDependence[0] && event.timeDependence <= filters.timeDependence[1]
+            val &&= event.beforeCutRating * 100 >= filters.beforeRating[0] && event.beforeCutRating * 100 <= filters.beforeRating[1]
+            val &&= event.afterCutRating * 100 >= filters.afterRating[0] && event.afterCutRating * 100 <= filters.afterRating[1]
+        }
+
         return val;
     }
 
@@ -136,206 +159,225 @@
                     ...event
                 })
 
-                if (minValue === null || event.accuracy < minValue) minValue = event.accuracy
-                if (minValue === null || event.fcAccuracy < minValue) minValue = event.fcAccuracy
+                if (shouldBeIncluded) {
+                    if (minValue === null || event.accuracy < minValue) minValue = event.accuracy
+                    if (minValue === null || event.fcAccuracy < minValue) minValue = event.fcAccuracy
 
-                if (maxValue === null || event.accuracy > maxValue) maxValue = event.accuracy
-                if (maxValue === null || event.fcAccuracy > maxValue) maxValue = event.fcAccuracy
+                    if (maxValue === null || event.accuracy > maxValue) maxValue = event.accuracy
+                    if (maxValue === null || event.fcAccuracy > maxValue) maxValue = event.fcAccuracy
+                }
 
                 return acc;
             }, {acc: [], fcAcc: []})
 
-        minValue -= minValue * 0.02;
+        // minValue -= minValue * 0.01;
         if (minValue < 0) minValue = 0;
-        maxValue += maxValue * 0.02;
+        // maxValue += maxValue * 0.01;
         if (maxValue > 100) maxValue = 100;
 
-        return {
-            datasets: [
-                {
-                    type: 'line',
-                    data: allEvents.acc,
-                    fill: false,
-                    color: 'white',
-                    borderWidth: 2,
-                    cubicInterpolationMode: 'monotone',
-                    tension: 0.4,
-                    label: 'Acc',
-                    spanGaps: true,
-                    segment: {
-                        borderWidth: ctx => skipped(ctx, 1),
-                        borderDash: ctx => skipped(ctx, [6, 6]),
-                    },
-
-                    backgroundColor: ctx => {
-                        switch (ctx?.raw?.type) {
-                            case 'miss':
-                            case 'badCut':
-                            case 'wallHit':
-                                return 'orange';
-
-                            case 'bombHit':
-                                return 'orange';
-                        }
-
-                        return 'deeppink'
-                    },
-                    borderColor: ctx => {
-                        switch (ctx?.raw?.type) {
-                            case 'miss':
-                            case 'badCut':
-                            case 'wallHit':
-                                return 'orange';
-
-                            case 'bombHit':
-                                return 'orange';
-                        }
-
-                        return 'deeppink'
-                    },
-                    pointRadius: ctx => {
-                        if (ctx?.raw?.type === 'hit') return 0;
-
-                        return 6;
-                    },
-                    hoverRadius: ctx => {
-                        if (ctx?.raw?.type === 'hit') return 3;
-
-                        return 10;
-                    },
-                    pointStyle: ctx => {
-                        if (ctx?.raw?.type === 'hit') return null;
-
-                        switch (ctx?.raw?.type) {
-                            case 'miss':
-                                return 'crossRot';
-                            case 'badCut':
-                                return 'triangle';
-                            case 'wallHit':
-                                return 'rect';
-                            case 'bombHit':
-                                return 'star';
-                        }
-
-                        return null;
-                    },
+        const mainColor = 'deeppink'
+        datasets = [
+            {
+                type: 'line',
+                data: allEvents.acc,
+                fill: false,
+                color: 'white',
+                borderWidth: 2,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4,
+                label: 'Acc',
+                spanGaps: true,
+                segment: {
+                    borderWidth: ctx => skipped(ctx, 1),
+                    borderDash: ctx => skipped(ctx, [6, 6]),
+                    borderColor: ctx => skipped(ctx, 'gray'),
                 },
 
-                {
-                    hidden: allEvents.fcAcc.length && allEvents.acc.length && allEvents.fcAcc[allEvents.fcAcc.length - 1].y === allEvents.acc[allEvents.acc.length - 1].y,
-                    type: 'line',
-                    data: allEvents.fcAcc,
-                    fill: false,
-                    borderColor: 'green',
-                    backgroundColor: 'green',
-                    borderWidth: 1,
-                    pointRadius: 0,
-                    cubicInterpolationMode: 'monotone',
-                    tension: 0.4,
-                    label: 'FC Acc',
-                    spanGaps: true,
-                    segment: {
-                        borderWidth: ctx => skipped(ctx, 1),
-                        borderDash: ctx => skipped(ctx, [6, 6]),
-                    },
-                },
-            ],
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                layout: {
-                    padding: {
-                        right: 0,
-                    },
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                    axis: 'xy',
-                },
-                plugins: {
-                    legend: {
-                        display: false,
-                        position: 'top',
-                        labels: {
-                            color: $theme === 'light' ? 'black' : 'white',
-                        }
-                    },
-                    title: {
-                        display: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                        // position: 'nearest',
-                        callbacks: {
-                            title: function (ctx) {
-                                if (!ctx?.[0]?.parsed?.x) return '';
+                backgroundColor: ctx => {
+                    switch (ctx?.raw?.type) {
+                        case 'miss':
+                        case 'badCut':
+                        case 'wallHit':
+                            return 'orange';
 
-                                return formatTime(ctx[0].parsed.x);
-                            },
-                        },
-                        external: tooltipHandler,
+                        case 'bombHit':
+                            return 'orange';
+                    }
+
+                    return mainColor
+                },
+                borderColor: ctx => {
+                    switch (ctx?.raw?.type) {
+                        case 'miss':
+                        case 'badCut':
+                        case 'wallHit':
+                            return 'orange';
+
+                        case 'bombHit':
+                            return 'orange';
+                    }
+
+                    return mainColor
+                },
+                pointRadius: ctx => {
+                    if (ctx?.raw?.type === 'hit') return 1;
+
+                    return 6;
+                },
+                hoverRadius: ctx => {
+                    if (ctx?.raw?.type === 'hit') return 3;
+
+                    return 10;
+                },
+                hoverBorderWidth: 6,
+                pointStyle: ctx => {
+                    if (ctx?.raw?.type === 'hit') return null;
+
+                    switch (ctx?.raw?.type) {
+                        case 'miss':
+                            return 'crossRot';
+                        case 'badCut':
+                            return 'triangle';
+                        case 'wallHit':
+                            return 'rect';
+                        case 'bombHit':
+                            return 'star';
+                    }
+
+                    return null;
+                },
+            },
+
+            {
+                hidden: allEvents.fcAcc.length && allEvents.acc.length && allEvents.fcAcc[allEvents.fcAcc.length - 1].y === allEvents.acc[allEvents.acc.length - 1].y,
+                type: 'line',
+                data: allEvents.fcAcc,
+                fill: false,
+                borderColor: 'green',
+                backgroundColor: 'green',
+                borderWidth: 1,
+                pointRadius: 0,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4,
+                label: 'FC Acc',
+                spanGaps: true,
+                segment: {
+                    borderWidth: ctx => skipped(ctx, 1),
+                    borderDash: ctx => skipped(ctx, [6, 6]),
+                },
+            },
+        ]
+        options = {
+            responsive: true,
+            maintainAspectRatio: true,
+            layout: {
+                padding: {
+                    right: 0,
+                },
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+                axis: 'xy',
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'top',
+                    labels: {
+                        color: $theme === 'light' ? 'black' : 'white',
                     }
                 },
-                scales: {
-                    xAxis: {
-                        type: 'linear',
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Time',
-                            color: $theme === 'light' ? 'black' : 'white',
-                        },
-                        ticks: {
-                            callback: val => val === Math.floor(val) ? formatTime(val) : null,
-                            autoSkip: false,
-                            major: {
-                                enabled: true,
-                            },
-                            font: function (context) {
-                                if (context.tick && context.tick.major) {
-                                    return {
-                                        weight: 'bold',
-                                    };
-                                }
-                            },
-                            color: $theme === 'light' ? 'black' : 'white',
-                        },
+                title: {
+                    display: false,
+                },
+                tooltip: {
+                    enabled: false,
+                    // position: 'nearest',
+                    callbacks: {
+                        title: function (ctx) {
+                            if (!ctx?.[0]?.parsed?.x) return '';
 
-                        grid: {
-                            color: 'rgba(60,60,60,.5)',
+                            return formatTime(ctx[0].parsed.x);
                         },
                     },
-                    yAxis: {
-                        display: true,
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Acc',
-                            color: $theme === 'light' ? 'black' : 'white',
-                        },
-                        ticks: {
-                            callback: val => (val === Math.floor(val) ? val + '%' : null),
-                            precision: 0,
-                            color: $theme === 'light' ? 'black' : 'white',
-                        },
-                        min: minValue,
-                        max: maxValue,
-                        grid: {
-                            color: 'rgba(60,60,60,.5)',
-                        }
-                    }
+                    external: tooltipHandler,
                 }
             },
+            scales: {
+                xAxis: {
+                    type: 'linear',
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Time',
+                        color: $theme === 'light' ? 'black' : 'white',
+                    },
+                    ticks: {
+                        callback: val => Number.isFinite(val) ? formatTime(val) : null,
+                        autoSkip: true,
+                        stepSize: 5,
+                        font: function (context) {
+                            if (context.tick && context.tick.major) {
+                                return {
+                                    weight: 'bold',
+                                };
+                            }
+                        },
+                        color: $theme === 'light' ? 'black' : 'white',
+                    },
+
+                    grid: {
+                        color: 'rgba(60,60,60,.5)',
+                    },
+                },
+                yAxis: {
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Map Acc',
+                        color: $theme === 'light' ? 'black' : 'white',
+                    },
+                    ticks: {
+                        callback: val => formatNumber(val, val === Math.floor(val) ? 0 : 1) + '%',
+                        autoSkip: true,
+                        stepSize: .5,
+                        includeBounds: false,
+                        precision: 1,
+                        color: $theme === 'light' ? 'black' : 'white',
+                    },
+                    min: minValue,
+                    max: maxValue,
+                    grid: {
+                        color: 'rgba(60,60,60,.5)',
+                    }
+                }
+            }
         }
     }
 
-    $: filters.hand = hand
-    $: ({datasets, options} = getAccChartDataFromReplay(replay, filters, $theme) ?? {})
+    const debouncedGetAccChartDataFromReplay = debounce((replay, filters) => getAccChartDataFromReplay(replay, filters), 300)
+    $: if (hand !== filters.hand) filters.hand = hand
+    $:debouncedGetAccChartDataFromReplay(replay, filters, $theme)
 </script>
 
 <aside>
     <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type}/>
+
+    <div>
+        <SingleFilterDropdown label="Score" bind:values={filters.score} min={0} max={115} step={1} pipstep={5}/>
+        <SingleFilterDropdown label="Before" bind:values={filters.before} min={0} max={70} step={1} pipstep={5}/>
+        <SingleFilterDropdown label="Precision" bind:values={filters.accCut} min={0} max={15} step={1} pipstep={1}/>
+        <SingleFilterDropdown label="After" bind:values={filters.after} min={0} max={30} step={1} pipstep={1}/>
+    </div>
+
+    <div>
+        <SingleFilterDropdown label="TD" bind:values={filters.timeDependence} min={0} max={1} step={0.01} pipstep={10} digits={2}/>
+        <SingleFilterDropdown label="PRE" bind:values={filters.beforeRating} min={0} max={300} step={1} pipstep={25} suffix="%"/>
+        <SingleFilterDropdown label="POST" bind:values={filters.afterRating} min={0} max={300} step={1} pipstep={25} suffix="%"/>
+    </div>
+
 </aside>
 
 <Chart {datasets} {options}>
@@ -426,6 +468,12 @@
 <style>
     aside {
         margin-top: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    aside > * {
+        margin-left: 1rem;
     }
 
     .tooltip {
