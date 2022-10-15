@@ -92,6 +92,11 @@
     label {
         display: block;
         text-align: left;
+        padding: 0 .5em;
+    }
+
+    section > div:nth-child(2) > label {
+        text-align: right;
     }
 
     .reset {
