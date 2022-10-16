@@ -29,7 +29,7 @@
 
 {#if filters}
     <sl-dropdown placement="bottom-end">
-        <sl-button slot="trigger" size="small" variant="neutral" caret>
+        <sl-button slot="trigger" size="small" variant={filters.direction?.length !== gridOrder?.length ? "primary" : "neutral"} caret>
             <span class="name">Direction <span class="icon"><FilterIcon/></span></span>
         </sl-button>
 

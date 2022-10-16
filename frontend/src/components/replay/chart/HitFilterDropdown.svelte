@@ -5,20 +5,29 @@
 
     export let filters
 
-    function resetAll() {
-        filters.score = [0, 115];
-        filters.before = [0, 70];
-        filters.accCut = [0, 15];
-        filters.after = [0, 30];
-        filters.timeDependence = [0, 1];
-        filters.beforeRating = [0, 300];
-        filters.afterRating = [0, 300];
+    const DEFAULT_VALUES = {
+        score: [0, 115],
+        before: [0, 70],
+        accCut: [0, 15],
+        after: [0, 30],
+        timeDependence: [0, 1],
+        beforeRating: [0, 300],
+        afterRating: [0, 300],
     }
+
+    function resetAll() {
+        filters = {
+            ...filters,
+            ...DEFAULT_VALUES
+        }
+    }
+
+    $: isDifferentFromDefault = Object.keys(DEFAULT_VALUES).some(key => filters?.[key]?.toString() !== DEFAULT_VALUES[key].toString())
 </script>
 
 {#if filters}
     <sl-dropdown placement="bottom-end">
-        <sl-button slot="trigger" size="small" variant="neutral" caret>
+        <sl-button slot="trigger" size="small" variant={isDifferentFromDefault ? "primary": "neutral"} caret>
             <span class="name">Hit <span class="icon"><FilterIcon/></span></span>
         </sl-button>
 
