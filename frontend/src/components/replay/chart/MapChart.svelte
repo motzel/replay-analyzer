@@ -52,8 +52,8 @@
         timeDependence: [0, 1],
         beforeRating: [0, 300],
         afterRating: [0, 300],
-        position: Array(LAYERS_COUNT * LINES_COUNT).fill(0).map((_,idx) => idx),
-        direction: Array(gridOrder?.length ?? 0).fill(0).map((_,idx) => idx),
+        position: Array(LAYERS_COUNT * LINES_COUNT).fill(0).map((_, idx) => idx),
+        direction: Array(gridOrder?.length ?? 0).fill(0).map((_, idx) => idx),
     }
 
     const tooltipHandler = async ctx => {
@@ -417,9 +417,9 @@
     <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type}/>
 
     <div>
-        <HitFilterDropdown bind:filters />
-        <PositionFilterDropdown bind:filters />
-        <DirectionFilterDropdown bind:filters />
+        <HitFilterDropdown bind:filters/>
+        <PositionFilterDropdown bind:filters/>
+        <DirectionFilterDropdown bind:filters/>
     </div>
 </aside>
 
