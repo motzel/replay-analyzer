@@ -3,6 +3,8 @@
     import Chart from "./Chart.svelte";
     import theme from '../../../stores/theme.js'
     import {formatNumber, formatTime} from "../../../utils/format.js";
+    import {getPositionIdx, LAYERS_COUNT, LINES_COUNT} from "../grid/utils/position";
+    import {gridOrder} from "../grid/utils/direction.js";
     import {debounce} from "../../../debounce.js";
     import Value from "../../common/Value.svelte";
     import Badge from "../../common/Badge.svelte";
@@ -11,7 +13,7 @@
     import CheckboxGroup from "../../common/CheckboxGroup.svelte";
     import HitFilterDropdown from "./HitFilterDropdown.svelte";
     import PositionFilterDropdown from "./PositionFilterDropdown.svelte";
-    import {getPositionIdx} from "../grid/utils/position";
+    import DirectionFilterDropdown from "./DirectionFilterDropdown.svelte";
 
     export let replay
     export let hand = "total"
@@ -50,8 +52,8 @@
         timeDependence: [0, 1],
         beforeRating: [0, 300],
         afterRating: [0, 300],
-        position: Array(12).fill(0).map((_,idx) => idx),
-        direction: Array(9).fill(0).map((_,idx) => idx),
+        position: Array(LAYERS_COUNT * LINES_COUNT).fill(0).map((_,idx) => idx),
+        direction: Array(gridOrder?.length ?? 0).fill(0).map((_,idx) => idx),
     }
 
     const tooltipHandler = async ctx => {
@@ -128,9 +130,16 @@
             val &&= event.afterCutRating * 100 >= filters.afterRating[0] && event.afterCutRating * 100 <= filters.afterRating[1]
         }
 
-        if (Number.isFinite(event.lineIdx) && Number.isFinite(event.lineLayer) && filters.position?.length !== 12) {
+        if (Number.isFinite(event.lineIdx) && Number.isFinite(event.lineLayer) && filters.position?.length !== LAYERS_COUNT * LINES_COUNT) {
             const positionIdx = getPositionIdx(event.lineLayer, event.lineIdx)
             val &&= filters.position.includes(positionIdx)
+        }
+
+        if (Number.isFinite(event.cutDirection) && filters.direction?.length !== gridOrder?.length) {
+            const directionIdxs = filters.direction
+                .map(idx => gridOrder?.findIndex(go => go?.order === idx))
+                .filter(v => v)
+            val &&= directionIdxs.includes(event.cutDirection);
         }
 
         return val;
@@ -416,6 +425,7 @@
     <div>
         <HitFilterDropdown bind:filters />
         <PositionFilterDropdown bind:filters />
+        <DirectionFilterDropdown bind:filters />
     </div>
 </aside>
 

@@ -1,4 +1,5 @@
 <script>
+    import {LAYERS_COUNT, LINES_COUNT} from "./utils/position.js";
     import Grid from "./Grid.svelte";
     import CheckIcon from "../../common/CheckIcon.svelte";
 
@@ -17,7 +18,7 @@
     })) ?? null
 </script>
 
-{#if finalGrid?.length === 12}
+{#if finalGrid?.length === LAYERS_COUNT * LINES_COUNT}
     <Grid grid={finalGrid} {digits} cols={4} rows={3} {withCounts} on:click>
         <svelte:fragment slot="tooltip" let:item let:value let:count let:idx let:digits>
             <slot name="tooltip" {item} {value} {count} {idx} {digits}>
@@ -27,7 +28,7 @@
 
         <svelte:fragment slot="background" let:idx>
             {#if selectable && (selected ?? []).includes(idx)}
-                <span class="bg">
+                <span class="check">
                     <CheckIcon/>
                 </span>
             {/if}
@@ -36,7 +37,7 @@
 {/if}
 
 <style>
-    .bg :global(svg) {
+    .check :global(svg) {
         font-size: 2rem;
         color: var(--sl-color-neutral-700);
     }

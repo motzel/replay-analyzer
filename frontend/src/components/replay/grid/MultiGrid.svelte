@@ -1,6 +1,8 @@
 <script>
-    import DirectionGrid from "./DirectionGrid.svelte";
+    import {LAYERS_COUNT, LINES_COUNT} from "./utils/position.js";
+    import {gridOrder} from "./utils/direction.js";
     import PositionGrid from "./PositionGrid.svelte";
+    import DirectionGrid from "./DirectionGrid.svelte";
 
     export let stats
     export let type = 'position'
@@ -10,8 +12,8 @@
     export let directionIndex = null
     export let withCounts = false
 
-    const DIRECTIONS_COUNT = 9
-    const POSITIONS_COUNT = 12
+    const DIRECTIONS_COUNT = gridOrder?.length ?? 0
+    const POSITIONS_COUNT = LAYERS_COUNT * LINES_COUNT
 
     function getDirectionGrid(statsArr, index) {
         let ret = [];

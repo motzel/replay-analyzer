@@ -1,36 +1,36 @@
 <script>
-    import {LAYERS_COUNT, LINES_COUNT} from "../grid/utils/position.js";
+    import {gridOrder} from "../grid/utils/direction.js";
     import FilterIcon from "../../common/FilterIcon.svelte";
-    import PositionGrid from "../grid/PositionGrid.svelte";
+    import DirectionGrid from "../grid/DirectionGrid.svelte";
 
     export let filters
 
     function clearAll() {
-        filters.position = [];
+        filters.direction = [];
     }
 
     function setAll() {
-        filters.position = Array(LAYERS_COUNT * LINES_COUNT).fill(0).map((_, idx) => idx);
+        filters.direction = Array(gridOrder?.length ?? 0).fill(0).map((_, idx) => idx);
     }
 
     function toggleIdx(e) {
         if (!Number.isFinite(e?.detail)) return;
 
-        if (!filters.position) setAll();
+        if (!filters.direction) setAll();
 
-        if (filters.position.includes(e.detail))
-            filters.position = filters.position.filter(v => v !== e.detail)
+        if (filters.direction.includes(e.detail))
+            filters.direction = filters.direction.filter(v => v !== e.detail)
         else
-            filters.position = [...filters.position, e.detail]
+            filters.direction = [...filters.direction, e.detail]
     }
 
-    $: grid = {avg: Array(LAYERS_COUNT * LINES_COUNT).fill(0)}
+    $: grid = {avg: Array(gridOrder?.length ?? 0).fill(0)}
 </script>
 
 {#if filters}
     <sl-dropdown placement="bottom-end">
         <sl-button slot="trigger" size="small" variant="neutral" caret>
-            <span class="name">Position <span class="icon"><FilterIcon/></span></span>
+            <span class="name">Direction <span class="icon"><FilterIcon/></span></span>
         </sl-button>
 
         <section>
@@ -39,7 +39,7 @@
                 <label on:click={setAll}>Set all</label>
             </div>
 
-            <PositionGrid {grid} selectable={true} selected={filters.position} on:click={toggleIdx}/>
+            <DirectionGrid {grid} selectable={true} selected={filters.direction} on:click={toggleIdx}/>
         </section>
     </sl-dropdown>
 {/if}
