@@ -1,5 +1,8 @@
 <script>
+    import {createEventDispatcher} from "svelte";
     import Value from "../../common/Value.svelte";
+
+    const dispatch = createEventDispatcher();
 
     export let grid
     export let valueKey = 'value'
@@ -25,14 +28,14 @@
                     </slot>
                 </div>
 
-                <div class="item" class:grayed={!count && !value}>
+                <div class="item" class:grayed={!count && !value} on:click={() => dispatch('click', idx)}>
                     <span class="value">
                         <slot name="value" {item} {value} {count} {idx} {digits}>
                             {#if count}
                                 <Value value={value} {digits}/>
 
                                 {#if withCounts}
-                                    <small class="count">(<Value value={count} digits={0} />)</small>
+                                    <small class="count">(<Value value={count} digits={0}/>)</small>
                                 {/if}
                             {/if}
                         </slot>

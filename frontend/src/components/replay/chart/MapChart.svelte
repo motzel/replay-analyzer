@@ -9,7 +9,9 @@
     import Tag from "../../common/Tag.svelte";
     import BlockGrid from "../grid/BlockGrid.svelte";
     import CheckboxGroup from "../../common/CheckboxGroup.svelte";
-    import ScoreFilterDropdown from "./ScoreFilterDropdown.svelte";
+    import HitFilterDropdown from "./HitFilterDropdown.svelte";
+    import PositionFilterDropdown from "./PositionFilterDropdown.svelte";
+    import {getPositionIdx} from "../grid/utils/position";
 
     export let replay
     export let hand = "total"
@@ -48,6 +50,8 @@
         timeDependence: [0, 1],
         beforeRating: [0, 300],
         afterRating: [0, 300],
+        position: Array(12).fill(0).map((_,idx) => idx),
+        direction: Array(9).fill(0).map((_,idx) => idx),
     }
 
     const tooltipHandler = async ctx => {
@@ -122,6 +126,11 @@
             val &&= event.timeDependence >= filters.timeDependence[0] && event.timeDependence <= filters.timeDependence[1]
             val &&= event.beforeCutRating * 100 >= filters.beforeRating[0] && event.beforeCutRating * 100 <= filters.beforeRating[1]
             val &&= event.afterCutRating * 100 >= filters.afterRating[0] && event.afterCutRating * 100 <= filters.afterRating[1]
+        }
+
+        if (Number.isFinite(event.lineIdx) && Number.isFinite(event.lineLayer) && filters.position?.length !== 12) {
+            const positionIdx = getPositionIdx(event.lineLayer, event.lineIdx)
+            val &&= filters.position.includes(positionIdx)
         }
 
         return val;
@@ -206,9 +215,9 @@
                 return acc;
             }, {acc: [], fcAcc: []})
 
-        // minValue -= minValue * 0.01;
+        minValue -= minValue * 0.01;
         if (minValue < 0) minValue = 0;
-        // maxValue += maxValue * 0.01;
+        maxValue += maxValue * 0.01;
         if (maxValue > 100) maxValue = 100;
 
         const mainColor = 'deeppink'
@@ -405,7 +414,8 @@
     <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type}/>
 
     <div>
-        <ScoreFilterDropdown bind:filters />
+        <HitFilterDropdown bind:filters />
+        <PositionFilterDropdown bind:filters />
     </div>
 </aside>
 

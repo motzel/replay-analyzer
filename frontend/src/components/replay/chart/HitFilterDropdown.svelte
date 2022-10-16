@@ -19,7 +19,7 @@
 {#if filters}
     <sl-dropdown placement="bottom-end">
         <sl-button slot="trigger" size="small" variant="neutral" caret>
-            <span class="icon"><FilterIcon/></span>
+            <span class="name">Hit <span class="icon"><FilterIcon/></span></span>
         </sl-button>
 
         <section>
@@ -70,6 +70,13 @@
 <style>
     * :global(.range-slider) {
         width: 12em;
+    }
+
+    .name {
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+        gap: .25rem;
     }
 
     .icon :global(svg) {
