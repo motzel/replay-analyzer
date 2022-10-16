@@ -222,32 +222,11 @@ export namespace main {
 		}
 	}
 	
-	
 
 }
 
 export namespace buffer {
 	
-	export class StatsSlice[uint16] {
-	    min: number[];
-	    avg: number[];
-	    med: number[];
-	    max: number[];
-	    count: number[];
-	
-	    static createFrom(source: any = {}) {
-	        return new StatsSlice[uint16](source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.min = source["min"];
-	        this.avg = source["avg"];
-	        this.med = source["med"];
-	        this.max = source["max"];
-	        this.count = source["count"];
-	    }
-	}
 	export class Stats[uint16] {
 	    min: number;
 	    avg: number;
@@ -282,6 +261,26 @@ export namespace buffer {
 	        this.avg = source["avg"];
 	        this.med = source["med"];
 	        this.max = source["max"];
+	    }
+	}
+	export class StatsSlice[uint16] {
+	    min: number[];
+	    avg: number[];
+	    med: number[];
+	    max: number[];
+	    count: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsSlice[uint16](source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min = source["min"];
+	        this.avg = source["avg"];
+	        this.med = source["med"];
+	        this.max = source["max"];
+	        this.count = source["count"];
 	    }
 	}
 

@@ -2,6 +2,7 @@
     import nav from "../../stores/nav.js";
     import logo from '../../../assets/images/logo.png'
     import ThemePicker from "./ThemePicker.svelte";
+    import ArrowIcon from "./ArrowIcon.svelte";
 </script>
 
 <nav>
