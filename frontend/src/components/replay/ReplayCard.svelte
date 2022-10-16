@@ -1,5 +1,5 @@
 <script>
-    import {router} from 'tinro';
+    import nav from "../../stores/nav.js";
     import Difficulty from "./song/Difficulty.svelte"
     import Acc from "./Acc.svelte"
     import Date from "../common/Date.svelte";
@@ -7,9 +7,8 @@
     import Tag from "../common/Tag.svelte";
 
     export let replay
-    export let hash = ''
 
-    $: replayUrl = `/replays/${replay?.absPath}#${hash}`
+    $: replayUrl = `/replays/${replay?.absPath}`
     $: misses = replay?.stats?.total?.misses ?? 0
     $: badCuts = replay?.stats?.total?.badCuts ?? 0
     $: bombHits = replay?.stats?.total?.bombHits ?? 0
@@ -23,7 +22,7 @@
         <div slot="image">
             <div class="bg-image"
                  style:background-image={`url(https://eu.cdn.beatsaver.com/${replay?.info?.hash?.toLowerCase()}.jpg)`}
-                 on:click={() => router.goto(replayUrl)}
+                 on:click={() => nav.go(replayUrl)}
             >
                 <div class="line">
                     <span></span>
@@ -68,7 +67,7 @@
                 <Date date={replay?.info?.timeSet} sync={true}/>
             </small>
             <sl-button variant="primary" size="small" pill
-                       on:click={() => router.goto(replayUrl)}>
+                       on:click={() => nav.go(replayUrl)}>
                 Analyze
             </sl-button>
         </div>

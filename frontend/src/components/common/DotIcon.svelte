@@ -4,5 +4,6 @@
     svg {
         width: 1em;
         height: 1em;
+        font-size: 1em;
     }
 </style>

@@ -34,11 +34,13 @@
 
         <svelte:fragment slot="background" let:idx>
             {#if gridSorted?.[idx]}
-                {#if Number.isFinite(gridSorted[idx].rotate)}
-                    <ArrowIcon rotate={gridSorted[idx].rotate}/>
-                {:else}
-                    <DotIcon/>
-                {/if}
+                <span class="direction-icon">
+                    {#if Number.isFinite(gridSorted[idx].rotate)}
+                        <ArrowIcon rotate={gridSorted[idx].rotate}/>
+                    {:else}
+                        <DotIcon/>
+                    {/if}
+                </span>
             {/if}
 
             {#if selectable && (selected ?? []).includes(idx)}
@@ -51,8 +53,8 @@
 {/if}
 
 <style>
-    :global(svg) {
-        font-size: 4.5em;
+    .direction-icon :global(svg) {
+        font-size: 4.5em!important;
         color: var(--sl-color-neutral-200);
         z-index: 0;
     }

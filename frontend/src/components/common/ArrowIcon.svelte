@@ -9,6 +9,7 @@
     svg {
         width: 1em;
         height: 1em;
+        font-size: 1em;
         rotate: var(--rotate, 0deg);
         transform-origin: 50% 50%;
     }

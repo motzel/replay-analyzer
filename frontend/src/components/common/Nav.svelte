@@ -1,10 +1,19 @@
 <script>
+    import nav from "../../stores/nav.js";
     import logo from '../../../assets/images/logo.png'
     import ThemePicker from "./ThemePicker.svelte";
 </script>
 
 <nav>
-    <img alt="App logo" id="logo" src="{logo}">
+    {#if $nav?.length > 1}
+        <sl-tooltip content="Back">
+                <span class="back" on:click={() => nav.back()}>
+                    <ArrowIcon rotate={270}/>
+                </span>
+        </sl-tooltip>
+    {:else}
+        <img alt="App logo" id="logo" src="{logo}">
+    {/if}
 
     <section class="center">
         <sl-tooltip content="Search not implemented yet">
@@ -33,9 +42,18 @@
         background-color: var(--color-nav);
     }
 
-    #logo {
+    #logo, .back {
+        font-size: 2rem;
         max-height: 2.5rem;
         margin-right: 1rem;
+        grid-row: 1/-1;
+        grid-column: 1/-1;
+    }
+
+    .back {
+        cursor: pointer;
+        margin-right: 1.5rem;
+        color: var(--sl-color-neutral-600);
     }
 
     .center {

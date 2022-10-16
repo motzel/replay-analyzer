@@ -1,10 +1,10 @@
 <script>
     import {gridOrder} from "./utils/direction.js";
+    import {getPositionIdx, LAYERS_COUNT, LINES_COUNT} from "./utils/position.js";
     import Grid from "../grid/Grid.svelte";
     import Value from "../../common/Value.svelte";
     import ArrowIcon from "../../common/ArrowIcon.svelte";
     import DotIcon from "../../common/DotIcon.svelte";
-    import {getPositionIdx, LAYERS_COUNT, LINES_COUNT} from "./utils/position.js";
 
     export let block;
 
@@ -31,11 +31,13 @@
 
         <svelte:fragment slot="background" let:idx>
             {#if Number.isFinite(block?.cutDirection) && idx === getPositionIdx(block?.lineLayer, block?.lineIdx)}
-                {#if Number.isFinite(gridOrder?.[block.cutDirection].rotate)}
-                    <ArrowIcon rotate={gridOrder?.[block.cutDirection].rotate}/>
-                {:else}
-                    <DotIcon/>
-                {/if}
+                <span class="direction-icon">
+                    {#if Number.isFinite(gridOrder?.[block.cutDirection].rotate)}
+                        <ArrowIcon rotate={gridOrder?.[block.cutDirection].rotate}/>
+                    {:else}
+                        <DotIcon/>
+                    {/if}
+                </span>
             {/if}
         </svelte:fragment>
     </Grid>
@@ -46,8 +48,8 @@
         color: var(--sl-color-neutral-500);
     }
 
-    :global(svg) {
-        font-size: 4.5em;
+    .direction-icon :global(svg) {
+        font-size: 4.5em!important;
         color: var(--sl-color-neutral-200);
         z-index: 0;
     }

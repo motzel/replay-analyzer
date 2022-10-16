@@ -14,8 +14,6 @@
 
     let hand = "total"
 
-    const hash = router.location.hash.get()
-
     async function loadReplay(path) {
         if (!path?.length) return
 
@@ -36,7 +34,6 @@
         }
     }
 
-    $: backUrl = `/replays#${hash}`
     $: path = decodeURIComponent(filepath)
     $: loadReplay(path)
 
@@ -63,10 +60,6 @@
     {:else }
         <p>Can not load replay file.</p>
     {/if}
-
-    <div style="margin-top: 3rem">
-        <a href={backUrl} style="color: var(--sl-color-danger-500)">Back</a>
-    </div>
 </article>
 
 <style>
