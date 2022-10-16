@@ -6,6 +6,8 @@
 
     let currentDir
 
+    document.documentElement.classList.add('sl-theme-dark');
+
     onMount(async () => {
         currentDir = await GetCwd()
 
@@ -63,6 +65,6 @@
     }
 
     .error {
-        color: red;
+        color: var(--sl-color-danger-500);
     }
 </style>

@@ -184,6 +184,7 @@ export namespace main {
 	export class ReplayItem {
 	    dir: string;
 	    filename: string;
+	    absPath: string;
 	    info?: Info;
 	    stats?: Stats;
 	    error?: string;
@@ -196,6 +197,7 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.dir = source["dir"];
 	        this.filename = source["filename"];
+	        this.absPath = source["absPath"];
 	        this.info = this.convertValues(source["info"], Info);
 	        this.stats = this.convertValues(source["stats"], Stats);
 	        this.error = source["error"];
@@ -219,7 +221,6 @@ export namespace main {
 		    return a;
 		}
 	}
-	
 	
 
 }
@@ -709,6 +710,7 @@ export namespace bsor {
 		    return a;
 		}
 	}
+	
 
 }
 

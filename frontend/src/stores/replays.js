@@ -34,9 +34,16 @@ store = (() => {
             })
     }
 
-    const load = async filename => LoadReplay(filename)
+    const load = async (filename, full = false) => {
+        if (!full) {
+            const replay = (replays ?? [])?.find(r => r.absPath === filename);
+            if (replay) return replay;
+        }
 
-    const compare = (r1, r2) => r1?.dir && r1?.filename && r1?.dir === r2?.dir && r1?.filename === r2?.filename
+        return LoadReplay(filename)
+    }
+
+    const compare = (r1, r2) => (r1?.absPath && r1?.absPath === r2?.absPath) || (r1?.dir && r1?.filename && r1?.dir === r2?.dir && r1?.filename === r2?.filename)
 
     EventsOn('indexing', function (data) {
         progress = data

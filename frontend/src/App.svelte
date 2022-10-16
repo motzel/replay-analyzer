@@ -10,7 +10,7 @@
 
     let initialized = false;
 
-    setBasePath('/src/assets/shoelace/');
+    setBasePath('/assets/shoelace/');
 
     router.mode.memory();
 
@@ -27,6 +27,9 @@
             import('@shoelace-style/shoelace/dist/components/tooltip/tooltip'),
             import('@shoelace-style/shoelace/dist/components/card/card'),
             import('@shoelace-style/shoelace/dist/components/tag/tag'),
+            import('@shoelace-style/shoelace/dist/components/radio-group/radio-group'),
+            import('@shoelace-style/shoelace/dist/components/radio-button/radio-button'),
+            import('@shoelace-style/shoelace/dist/components/progress-ring/progress-ring'),
             import('@shoelace-style/shoelace/dist/components/relative-time/relative-time'),
             import('@shoelace-style/shoelace/dist/components/format-number/format-number'),
         ])
@@ -57,9 +60,9 @@
             </Layout>
         </Route>
 
-        <Route path="/:filename" let:meta>
+        <Route path="/:filepath" let:meta>
             <Layout>
-                <Replay filename={meta.params.filename} />
+                <Replay filepath={meta.params.filepath} />
             </Layout>
         </Route>
     </Route>

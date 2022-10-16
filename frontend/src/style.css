@@ -1,14 +1,18 @@
 :root {
     --blue-saber: #2064a8;
     --red-saber: #ff0000;
+
 }
 
 :root, :host, .sl-theme-light {
-    --color-background: rgba(238, 238, 238, 1);
-    --color-nav: rgba(220, 220, 220, 1);
+    --color-background: var(--sl-color-neutral-50);
+    --color-nav: var(--sl-color-neutral-200);
+    --sl-tooltip-background-color: var(--sl-color-neutral-200);
+    --sl-tooltip-color: var(--sl-color-neutral-900);
 }
 
 :host, .sl-theme-dark {
+    /*--color-background: var(--sl-color-neutral-50);*/
     --color-background: rgba(27, 38, 54, 1);
     --color-nav: rgba(22, 31, 44, 1);
 }
@@ -43,7 +47,7 @@ body {
     font-style: normal;
     font-weight: 400;
     src: local(""),
-    url("assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
+    url("/assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
 }
 
 #app {

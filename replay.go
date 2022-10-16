@@ -118,6 +118,7 @@ func NewInfo(events *bsor.ReplayEventsWithStats) *Info {
 type ReplayItem struct {
 	Dir      string  `json:"dir"`
 	Filename string  `json:"filename"`
+	AbsPath  string  `json:"absPath"`
 	Info     *Info   `json:"info"`
 	Stats    *Stats  `json:"stats"`
 	Error    *string `json:"error"`
@@ -207,7 +208,12 @@ func (app *App) IndexReplays() ([]ReplayItem, error) {
 			newFileName = file.Name()
 		}
 
-		bsorFiles = append(bsorFiles, ReplayItem{Filename: newFileName, Dir: dir})
+		var absPath string
+		if absPath, err = filepath.Abs(filepath.Join(dir, newFileName)); err != nil {
+			absPath = filepath.Join(dir, newFileName)
+		}
+
+		bsorFiles = append(bsorFiles, ReplayItem{Filename: newFileName, Dir: dir, AbsPath: absPath})
 	}
 
 	wails.LogInfof(app.ctx, "%v BSOR files(s) found", len(bsorFiles))

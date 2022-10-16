@@ -1,6 +1,7 @@
 <script>
     import {tick} from "svelte";
     import {router} from 'tinro';
+    import nav from "../../stores/nav.js";
     import {throttle} from "../../debounce.js";
     import replaysStore from '../../stores/replays.js'
     import ReplayCard from "../replay/ReplayCard.svelte";
@@ -62,13 +63,16 @@
     $: numOfReplays = $replaysStore?.length ?? 0
 
     $: throttledUpdateHash(numOfVisible, scroll)
+
+    $: currentUrl = `/replays#${hash}`
+    $: nav.replace(currentUrl)
 </script>
 
 <section>
     {#if filteredReplays?.length}
         <section class="replays">
-            {#each filteredReplays as replay}
-                <ReplayCard {replay} {hash}/>
+            {#each filteredReplays as replay (`${replay?.dir ?? ''}/${replay?.filename}`)}
+                <ReplayCard {replay}/>
             {/each}
 
             <IntersectionObserver on:intersect={onIntersect} top={400}/>

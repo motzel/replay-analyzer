@@ -10,9 +10,15 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
+    "chart.js": "^3.9.1",
+    "chartjs-adapter-luxon": "^1.2.0",
+    "chartjs-plugin-zoom": "^1.2.1",
+    "luxon": "^3.0.4",
     "svelte": "^3.49.0",
+    "svelte-range-slider-pips": "^2.0.3",
     "tinro": "^0.6.12",
-    "vite": "^3.0.0"
+    "vite": "^3.0.0",
+    "vite-plugin-static-copy": "^0.9.0"
   },
   "dependencies": {
     "@shoelace-style/shoelace": "^2.0.0-beta.82"

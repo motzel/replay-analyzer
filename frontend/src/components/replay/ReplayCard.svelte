@@ -1,13 +1,14 @@
 <script>
-    import {router} from 'tinro';
-    import Difficulty from "../common/Difficulty.svelte"
-    import Acc from "../common/Acc.svelte"
+    import nav from "../../stores/nav.js";
+    import Difficulty from "./song/Difficulty.svelte"
+    import Acc from "./Acc.svelte"
     import Date from "../common/Date.svelte";
+    import PlayerName from "./PlayerName.svelte";
+    import Tag from "../common/Tag.svelte";
 
     export let replay
-    export let hash = ''
 
-    $: replayUrl = `/replays/${replay?.filename}#${hash}`
+    $: replayUrl = `/replays/${replay?.absPath}`
     $: misses = replay?.stats?.total?.misses ?? 0
     $: badCuts = replay?.stats?.total?.badCuts ?? 0
     $: bombHits = replay?.stats?.total?.bombHits ?? 0
@@ -21,7 +22,7 @@
         <div slot="image">
             <div class="bg-image"
                  style:background-image={`url(https://eu.cdn.beatsaver.com/${replay?.info?.hash?.toLowerCase()}.jpg)`}
-                 on:click={() => router.goto(replayUrl)}
+                 on:click={() => nav.go(replayUrl)}
             >
                 <div class="line">
                     <span></span>
@@ -46,7 +47,7 @@
                         </sl-tooltip>
                     {/if}
 
-                    <Acc value={replay?.info?.accuracy}/>
+                    <Tag><Acc value={replay?.info?.accuracy}/></Tag>
                 </div>
             </div>
         </div>
@@ -56,7 +57,9 @@
                 {replay?.info?.songName}
             </header>
 
-            <small>{replay?.info?.playerName}</small>
+            <small>
+                <PlayerName playerName={replay?.info?.playerName} playerId={replay?.info?.playerId}/>
+            </small>
         </div>
 
         <div slot="footer">
@@ -64,7 +67,7 @@
                 <Date date={replay?.info?.timeSet} sync={true}/>
             </small>
             <sl-button variant="primary" size="small" pill
-                       on:click={() => router.goto(replayUrl)}>
+                       on:click={() => nav.go(replayUrl)}>
                 Analyze
             </sl-button>
         </div>

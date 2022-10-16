@@ -79,12 +79,13 @@ func main() {
 							return
 						}
 
+						fullPath := filepath.Join(app.config.ReplaysDir(), newFilename)
+
 						replayItem := ReplayItem{
 							Dir:      app.config.ReplaysDir(),
 							Filename: newFilename,
+							AbsPath:  fullPath,
 						}
-
-						fullPath := filepath.Join(app.config.ReplaysDir(), newFilename)
 
 						var replay *bsor.ReplayEventsWithStats
 						if replay, err = app.LoadReplay(fullPath); err != nil {
@@ -100,9 +101,13 @@ func main() {
 
 						runtime.EventsEmit(app.ctx, "replay-added", replayItem)
 					case fsnotify.Remove, fsnotify.Rename:
+						filename := event.Name[len(app.config.ReplaysDir())+1:]
+						fullPath := filepath.Join(app.config.ReplaysDir(), filename)
+
 						replayItem := ReplayItem{
 							Dir:      app.config.ReplaysDir(),
-							Filename: event.Name[len(app.config.ReplaysDir())+1:],
+							Filename: filename,
+							AbsPath:  fullPath,
 						}
 
 						log.Info(fmt.Sprintf("File watcher: %s removed", event.Name))
@@ -162,9 +167,9 @@ func main() {
 	// Create application with options
 	err = wails.Run(&options.App{
 		Title:              "BL Replay Analyzer",
-		Width:              1024,
-		Height:             768,
-		MinWidth:           800,
+		Width:              876,
+		Height:             700,
+		MinWidth:           876,
 		MinHeight:          700,
 		Assets:             assets,
 		BackgroundColour:   &options.RGBA{R: 27, G: 38, B: 54, A: 1},
