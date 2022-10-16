@@ -204,12 +204,14 @@
                 acc.acc.push({
                     x: event.eventTime + totalPauseOffset,
                     y: !shouldBeIncluded ? null : event.accuracy,
+                    totalPauseOffset,
                     ...event
                 })
 
                 acc.fcAcc.push({
                     x: event.eventTime + totalPauseOffset,
                     y: !shouldBeIncluded ? null : event.fcAccuracy,
+                    totalPauseOffset,
                     ...event
                 })
 
@@ -347,14 +349,6 @@
                 },
                 tooltip: {
                     enabled: false,
-                    // position: 'nearest',
-                    callbacks: {
-                        title: function (ctx) {
-                            if (!ctx?.[0]?.parsed?.x) return '';
-
-                            return formatTime(ctx[0].parsed.x);
-                        },
-                    },
                     external: tooltipHandler,
                 },
                 regions: {
@@ -437,17 +431,20 @@
                 {@const hand = event?.colorType === 0 ? 'left' : 'right'}
                 {@const valueVariant = event?.type !== 'wallHit' ? (hand === 'left' ? 'red-saber' : 'blue-saber') : 'neutral'}
 
-                {#if tooltipData?.title?.length}
-                    {#each tooltipData.title as title}
-                        <header>
-                            <label>Time:</label>
-                            <span>{title}</span>
-
-                            {#if event?.eventType !== 0}
-                                <Tag variant={valueVariant}>{event?.typeName}</Tag>
+                {#if Number.isFinite(event?.eventTime)}
+                    <header>
+                        <label>Time:</label>
+                        <span>
+                            {formatTime(event.eventTime)}
+                            {#if event.totalPauseOffset > 0}
+                                <small>(+{formatTime(event.totalPauseOffset)})</small>
                             {/if}
-                        </header>
-                    {/each}
+                        </span>
+
+                        {#if event?.eventType !== 0}
+                            <Tag variant={valueVariant}>{event?.typeName}</Tag>
+                        {/if}
+                    </header>
                 {/if}
 
                 {#if tooltipData?.values?.length}
