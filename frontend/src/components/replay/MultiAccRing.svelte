@@ -15,7 +15,7 @@
     <div>
         <AccRing value={value2} label={label2} {size} color="green" hoist={true}>
             <svelte:fragment slot="label" let:label>
-                <small style="top: 1.45em;">
+                <small style="top: 2.15em;">
                     {label}
                 </small>
             </svelte:fragment>
@@ -35,7 +35,7 @@
     <div>
         <AccRing value={value} label={label} size={`calc(${size} - 1em)`} hoist={true}>
             <svelte:fragment slot="label" let:label>
-                <small class="main" style="top: -1.35em;">
+                <small class="main" style="top: -1.65em;">
                     {label}
                 </small>
             </svelte:fragment>
