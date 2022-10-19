@@ -5,6 +5,7 @@
     export let value = []
     export let size = "small"
     export let variant = "primary"
+    export let disabled = false
 
     const dispatch = createEventDispatcher();
 
@@ -37,13 +38,13 @@
         {#each items as item(item.value)}
             {#if !item?.items?.length}
                 <sl-button class:active={value?.includes(item?.value)}
-                           variant={value?.includes(item?.value) ? variant : 'default'} {size}
+                           variant={value?.includes(item?.value) ? variant : 'default'} {size} {disabled}
                            on:click={() => toggle(item)}
                 >{item?.label ?? item?.value}</sl-button>
             {:else}
                 {@const selectedItem = item.items.find(i => i.value === item.itemValue)}
-                <sl-dropdown on:sl-select={e => onDropdownChanged(item, e)}>
-                    <sl-button class:active={!selectedItem?.notActive} variant={selectedItem?.notActive ? "default" : variant} {size} slot="trigger" caret>
+                <sl-dropdown on:sl-select={e => onDropdownChanged(item, e)} {disabled}>
+                    <sl-button class:active={!selectedItem?.notActive} variant={selectedItem?.notActive ? "default" : variant} {size} {disabled} slot="trigger" caret>
                         {selectedItem?.label ?? selectedItem?.value ?? item?.label ?? item?.value}
                     </sl-button>
                     <sl-menu>

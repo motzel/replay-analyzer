@@ -18,8 +18,31 @@
     export let replay
     export let hand = "total"
 
+    const mainColor = 'deeppink'
+
     let datasets = null
     let options = null
+
+    let chartType = "map"
+
+    let bucket = [
+        {value: 114, label: 'Perfect', color: 'gray'},
+        {value: 112, label: 'Good', color: 'green'},
+        {value: 108, label: 'Ok', color: 'cyan'},
+        {value: 105, label: 'Lame', color: 'violet'},
+        {value: 100, label: 'Bad', color: 'orange'},
+        {value: 0, label: 'WTF', color: 'red'},
+    ].sort((a, b) => b.value - a.value)
+
+    const getScoreAssessment = score => {
+        if (!bucket.length) return {value: 0, label: '???', color: mainColor};
+
+        for (const item of bucket) {
+            if (score >= item.value) return item;
+        }
+
+        return bucket[bucket.length - 1];
+    }
 
     const FILTER_TYPES = [
         {value: 'hit', label: 'Hit'},
@@ -113,6 +136,8 @@
     const shouldEventBeIncluded = (event, filters) => {
         if (!event) return false;
 
+        if (chartType === 'hit' && event.type !== 'hit') return false;
+
         let val = filters.type.includes(event.type)
 
         if (val && hand !== 'total' && ['hit', 'miss', 'badCut'].includes(event.type)) {
@@ -138,14 +163,14 @@
         if (Number.isFinite(event.cutDirection) && filters.direction?.length !== gridOrder?.length) {
             const directionIdxs = filters.direction
                 .map(idx => gridOrder?.findIndex(go => go?.order === idx))
-                .filter(v => v)
+                .filter(v => v >= 0)
             val &&= directionIdxs.includes(event.cutDirection);
         }
 
         return val;
     }
 
-    function getAccChartDataFromReplay(replay, filters) {
+    function getAccChartDataFromReplay(replay, filters, chartType) {
         if (!replay?.notes) return null;
 
         const skipped = (ctx, value) => (ctx.p0.skip || ctx.p1.skip ? value : undefined);
@@ -157,6 +182,8 @@
         const pauses = (replay?.pauses ?? []).sort((a, b) => a?.time - b?.time)
         let currentPausesIdx = 0
         let totalPauseOffset = 0
+
+        const bucketCount = bucket.map(item => ({...item, count: 0}))
 
         let pauseRegions = (pauseType !== 'no' ? pauses : [])
             .map(p => ({
@@ -201,47 +228,57 @@
                     currentPausesIdx++
                 }
 
+                const bucketItem = getScoreAssessment(event?.score ?? 0)
+
+                if (shouldBeIncluded) {
+                    const bucketCountItem = bucketCount.find(i => i.value === bucketItem.value)
+                    if (bucketCountItem) bucketCountItem.count++;
+                }
+
                 acc.acc.push({
                     x: event.eventTime + totalPauseOffset,
-                    y: !shouldBeIncluded ? null : event.accuracy,
+                    y: !shouldBeIncluded ? null : (chartType === 'map' ? event.accuracy : event.score),
                     totalPauseOffset,
-                    ...event
+                    ...event,
+                    bucketItem,
                 })
 
                 acc.fcAcc.push({
                     x: event.eventTime + totalPauseOffset,
-                    y: !shouldBeIncluded ? null : event.fcAccuracy,
+                    y: !shouldBeIncluded ? null : (chartType === 'map' ? event.fcAccuracy : event.score),
                     totalPauseOffset,
                     ...event
                 })
 
                 if (shouldBeIncluded) {
-                    if (minValue === null || event.accuracy < minValue) minValue = event.accuracy
-                    if (minValue === null || event.fcAccuracy < minValue) minValue = event.fcAccuracy
+                    const accVal = acc.acc[acc.acc.length - 1].y
+                    const fcAccVal = acc.fcAcc[acc.fcAcc.length - 1].y
 
-                    if (maxValue === null || event.accuracy > maxValue) maxValue = event.accuracy
-                    if (maxValue === null || event.fcAccuracy > maxValue) maxValue = event.fcAccuracy
+                    if (minValue === null || accVal < minValue) minValue = accVal
+                    if (chartType === 'map' && (minValue === null || fcAccVal < minValue)) minValue = fcAccVal
+
+                    if (maxValue === null || accVal > maxValue) maxValue = accVal
+                    if (chartType === 'map' && (maxValue === null || fcAccVal > maxValue)) maxValue = fcAccVal
                 }
 
                 return acc;
             }, {acc: [], fcAcc: []})
 
-        minValue -= minValue * 0.01;
+        minValue -= chartType === 'map' ? minValue * 0.01 : 1;
         if (minValue < 0) minValue = 0;
         maxValue += maxValue * 0.01;
-        if (maxValue > 100) maxValue = 100;
+        if (chartType === 'map' && maxValue > 100) maxValue = 100;
 
-        const mainColor = 'deeppink'
         datasets = [
             {
-                type: 'line',
+                type: chartType === 'map' ? 'line' : 'scatter',
                 data: allEvents.acc,
                 fill: false,
                 color: 'white',
                 borderWidth: 2,
                 cubicInterpolationMode: 'monotone',
                 tension: 0.4,
-                label: 'Acc',
+                label: chartType === 'map' ? 'Acc' : 'Hit acc',
                 spanGaps: true,
                 segment: {
                     borderWidth: ctx => skipped(ctx, 1),
@@ -260,7 +297,9 @@
                             return 'orange';
                     }
 
-                    return mainColor
+                    if (chartType === 'map') return mainColor;
+
+                    return ctx?.raw?.bucketItem?.color ?? mainColor
                 },
                 borderColor: ctx => {
                     switch (ctx?.raw?.type) {
@@ -273,9 +312,13 @@
                             return 'orange';
                     }
 
-                    return mainColor
+                    if (chartType === 'map') return mainColor;
+
+                    return ctx?.raw?.bucketItem?.color ?? mainColor
                 },
                 pointRadius: ctx => {
+                    if (chartType === 'hit') return 2;
+
                     if (ctx?.raw?.type === 'hit') return 1;
 
                     return 6;
@@ -303,7 +346,9 @@
                     return null;
                 },
             },
+        ]
 
+        if (chartType === 'map') datasets.push(
             {
                 hidden: allEvents.fcAcc.length && allEvents.acc.length && allEvents.fcAcc[allEvents.fcAcc.length - 1].y === allEvents.acc[allEvents.acc.length - 1].y,
                 type: 'line',
@@ -322,14 +367,13 @@
                     borderDash: ctx => skipped(ctx, [6, 6]),
                 },
             },
-        ]
+        )
+
         options = {
             responsive: true,
             maintainAspectRatio: true,
             layout: {
-                padding: {
-                    right: 0,
-                },
+                padding: 0,
             },
             interaction: {
                 intersect: false,
@@ -342,7 +386,23 @@
                     position: 'top',
                     labels: {
                         color: $theme === 'light' ? 'black' : 'white',
-                    }
+                        generateLabels: chartType === 'hit'
+                            ? chart => {
+
+                                const sum = bucketCount.reduce((sum, item) => sum + item.count, 0)
+                                return bucketCount
+                                    .filter(item => item.count)
+                                    .map(item => ({
+                                        text: `${item.label ?? ''} x${item.count} / ${sum ? formatNumber(item.count / sum * 100, 2) : 0}%`,
+                                        datasetIndex: 0,
+                                        fillStyle: item?.color ?? mainColor,
+                                        strokeStyle: item?.color ?? mainColor,
+                                    }))
+                            }
+                            : undefined,
+                    },
+                    onClick: chartType === 'hit' ? () => {
+                    } : undefined,
                 },
                 title: {
                     display: false,
@@ -383,23 +443,26 @@
                     },
                 },
                 yAxis: {
+                    type: 'linear',
                     display: true,
                     position: 'left',
                     title: {
                         display: true,
-                        text: 'Map Acc',
+                        text: chartType === 'map' ? 'Map Acc' : 'Hit Acc',
                         color: $theme === 'light' ? 'black' : 'white',
                     },
                     ticks: {
-                        callback: val => formatNumber(val, val === Math.floor(val) ? 0 : 1) + '%',
+                        callback: val => chartType === 'map'
+                            ? formatNumber(val, val === Math.floor(val) ? 0 : 1) + '%'
+                            : val >= 0 && val <= 115 ? formatNumber(val, 0) : null,
                         autoSkip: true,
-                        stepSize: .5,
-                        includeBounds: false,
-                        precision: 1,
+                        stepSize: chartType === 'map' ? .5 : 1,
+                        includeBounds: chartType !== 'map',
+                        precision: chartType === 'map' ? 1 : 0,
                         color: $theme === 'light' ? 'black' : 'white',
                     },
                     min: minValue,
-                    max: maxValue,
+                    max: chartType === 'map' || maxValue < 115 ? maxValue : 116,
                     grid: {
                         color: 'rgba(60,60,60,.5)',
                     }
@@ -408,13 +471,29 @@
         }
     }
 
-    const debouncedGetAccChartDataFromReplay = debounce((replay, filters) => getAccChartDataFromReplay(replay, filters), 300)
+    function onChartTypeChange(e) {
+        chartType = e?.target?.value ?? 'map'
+
+        if (chartType === 'hit') filters.type = [...new Set([...filters.type, 'hit'])]
+    }
+
+    const debouncedGetAccChartDataFromReplay = debounce((replay, filters, chartType) => getAccChartDataFromReplay(replay, filters, chartType), 300)
     $: if (hand !== filters.hand) filters.hand = hand
-    $:debouncedGetAccChartDataFromReplay(replay, filters, $theme)
+    $:debouncedGetAccChartDataFromReplay(replay, filters, chartType, $theme)
 </script>
 
 <aside>
-    <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type}/>
+    <div>
+        <sl-radio-group label="Select a chart type" name="chartType" value={chartType}
+                        on:sl-change={onChartTypeChange}>
+            <sl-radio-button size="small" value="map" pill>Map acc</sl-radio-button>
+            <sl-radio-button size="small" value="hit" pill>Hit acc</sl-radio-button>
+        </sl-radio-group>
+    </div>
+
+    <div>
+        <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type} disabled={chartType !== 'map'}/>
+    </div>
 
     <div>
         <HitFilterDropdown bind:filters/>
@@ -448,21 +527,23 @@
                 {/if}
 
                 {#if tooltipData?.values?.length}
-                    <section class="datasets">
-                        {#each tooltipData.values as value}
-                            {#if value?.data}
-                                <section class="dataset" style:--color={value.color}>
-                                    <div class="box"
-                                         style:--bg-color={value.backgroundColor}
-                                         style:--border-color=(value.borderColor}
-                                         style:--border-width=(value.borderWidth}
-                                    ></div>
-                                    <label>{value?.data?.dataset?.label}</label>
-                                    <span>{formatNumber(value?.data?.raw?.y)}%</span>
-                                </section>
-                            {/if}
-                        {/each}
-                    </section>
+                    {#if chartType !== 'hit'}
+                        <section class="datasets">
+                            {#each tooltipData.values as value}
+                                {#if value?.data}
+                                    <section class="dataset" style:--color={value.color}>
+                                        <div class="box"
+                                             style:--bg-color={value.backgroundColor}
+                                             style:--border-color=(value.borderColor}
+                                             style:--border-width=(value.borderWidth}
+                                        ></div>
+                                        <label>{value?.data?.dataset?.label}</label>
+                                        <span>{formatNumber(value?.data?.raw?.y)}%</span>
+                                    </section>
+                                {/if}
+                            {/each}
+                        </section>
+                    {/if}
 
                     <section class="block">
                         <div class="stats">
@@ -518,8 +599,8 @@
         align-items: center;
     }
 
-    aside > * {
-        margin-left: .5rem;
+    aside > *:not(:last-child) {
+        margin-right: .5rem;
     }
 
     .tooltip {

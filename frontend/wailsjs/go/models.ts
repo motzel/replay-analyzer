@@ -86,6 +86,7 @@ export namespace main {
 		    return a;
 		}
 	}
+	
 	export class Info {
 	    modVersion: string;
 	    gameVersion: string;
@@ -221,7 +222,6 @@ export namespace main {
 		    return a;
 		}
 	}
-	
 
 }
 

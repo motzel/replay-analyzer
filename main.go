@@ -167,10 +167,10 @@ func main() {
 	// Create application with options
 	err = wails.Run(&options.App{
 		Title:              "BL Replay Analyzer",
-		Width:              876,
-		Height:             700,
-		MinWidth:           876,
-		MinHeight:          700,
+		Width:              950,
+		Height:             750,
+		MinWidth:           950,
+		MinHeight:          750,
 		Assets:             assets,
 		BackgroundColour:   &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:          app.startup,
