@@ -5,8 +5,22 @@
     import ThemePicker from "./ThemePicker.svelte";
     import ArrowIcon from "./ArrowIcon.svelte";
 
+    let searchPopupActive = false;
     function onSearchChange(e) {
         search.updateValue(e?.target?.value ?? '')
+
+        if ($search.global) {
+            if (e?.target?.value?.length) searchPopupActive = true
+            else searchPopupActive = false
+        }
+    }
+
+    function onSearchFocus() {
+        if ($search.global) searchPopupActive = true
+    }
+
+    function onSearchBlur() {
+        searchPopupActive = false
     }
 </script>
 
@@ -22,12 +36,18 @@
     {/if}
 
     <section class="center">
-<!--        TODO: display dropdown if global mode is not disabled-->
-        <sl-tooltip content="Search for replays ">
-            <sl-input placeholder="Search..." size="medium" pill on:input={onSearchChange} value={$search.value}>
-                <sl-icon name="search" slot="suffix"></sl-icon>
-            </sl-input>
-        </sl-tooltip>
+        <sl-popup placement="bottom-start" active={searchPopupActive}>
+            <span class="input-box" slot="anchor">
+                <sl-input placeholder="Search..." size="medium" pill on:input={onSearchChange} value={$search.value}
+                on:focus={onSearchFocus} on:blur={onSearchBlur}>
+                    <sl-icon name="search" slot="suffix"></sl-icon>
+                </sl-input>
+            </span>
+
+            <div class="search-dropdown">
+                TODO: global search results
+            </div>
+        </sl-popup>
     </section>
 
     <section class="right">
@@ -70,9 +90,16 @@
         align-items: center;
     }
 
-    .center sl-input {
+    .center .input-box, .center sl-input {
         width: 100%;
         max-width: min(50rem, 100%);
+    }
+
+    .search-dropdown {
+        width: min(48rem, calc(100vw - 138px - 5rem));
+        background-color: var(--color-background);
+        text-align: center;
+        padding: 1em;
     }
 
     .right {
