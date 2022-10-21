@@ -1,7 +1,8 @@
 <script>
-    import {tick} from "svelte";
+    import {onMount, tick} from "svelte";
     import {router} from 'tinro';
     import nav from "../../stores/nav.js";
+    import search from '../../stores/search.js'
     import {throttle} from "../../debounce.js";
     import replaysStore from '../../stores/replays.js'
     import ReplayCard from "../replay/ReplayCard.svelte";
@@ -59,7 +60,32 @@
     const updateHash = (numOfVisible, scroll) => hash = `visible=${numOfVisible}&scroll=${scroll}`
     const throttledUpdateHash = throttle((numOfVisible, scroll) => updateHash(numOfVisible, scroll), THROTTLE_MS)
 
-    $: filteredReplays = $replaysStore?.slice(0, numOfVisible) ?? []
+    function updateSearch(value) {
+        numOfVisible = INCREMENT
+        window.scrollY = 0
+    }
+
+    onMount(() => {
+        search.disableGlobal()
+
+        return () => search.enableGlobal()
+    })
+
+    $: updateSearch($search.value)
+
+    $: filteredReplays = $replaysStore
+        ?.filter(r => {
+            if (!$search.value) return true;
+
+            let passing = false
+
+            passing ||= r?.info?.songName?.toLowerCase()?.indexOf($search?.value?.toLowerCase()) >= 0 ?? false
+            passing ||= r?.info?.mapper?.toLowerCase()?.indexOf($search?.value?.toLowerCase()) >= 0 ?? false
+            passing ||= r?.info?.playerName?.toLowerCase()?.indexOf($search?.value?.toLowerCase()) >= 0 ?? false
+
+            return passing
+        })
+        ?.slice(0, numOfVisible) ?? []
     $: numOfReplays = $replaysStore?.length ?? 0
 
     $: throttledUpdateHash(numOfVisible, scroll)

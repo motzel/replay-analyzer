@@ -1,8 +1,13 @@
 <script>
     import nav from "../../stores/nav.js";
+    import search from '../../stores/search.js'
     import logo from '../../../assets/images/logo.png'
     import ThemePicker from "./ThemePicker.svelte";
     import ArrowIcon from "./ArrowIcon.svelte";
+
+    function onSearchChange(e) {
+        search.updateValue(e?.target?.value ?? '')
+    }
 </script>
 
 <nav>
@@ -17,8 +22,9 @@
     {/if}
 
     <section class="center">
-        <sl-tooltip content="Search not implemented yet">
-            <sl-input placeholder="Search..." size="medium" pill>
+<!--        TODO: display dropdown if global mode is not disabled-->
+        <sl-tooltip content="Search for replays ">
+            <sl-input placeholder="Search..." size="medium" pill on:input={onSearchChange} value={$search.value}>
                 <sl-icon name="search" slot="suffix"></sl-icon>
             </sl-input>
         </sl-tooltip>
@@ -67,10 +73,6 @@
     .center sl-input {
         width: 100%;
         max-width: min(50rem, 100%);
-    }
-
-    .center sl-input::part(input) {
-        cursor: not-allowed;
     }
 
     .right {
