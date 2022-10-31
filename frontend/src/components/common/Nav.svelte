@@ -7,7 +7,7 @@
     import ArrowIcon from "./ArrowIcon.svelte";
     import Song from "../replay/song/Song.svelte";
 
-    const NUM_OF_RESULTS = 5;
+    const NUM_OF_RESULTS = 7;
 
     let searchPopupActive = false;
 
