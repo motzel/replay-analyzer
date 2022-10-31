@@ -3,12 +3,13 @@
     import search from '../../stores/search.js'
     import filteredReplaysStore from "../../stores/filtered-replays.js";
     import logo from '../../../assets/images/logo.png'
-    import ThemePicker from "./ThemePicker.svelte";
     import ArrowIcon from "./ArrowIcon.svelte";
     import Song from "../replay/song/Song.svelte";
+    import Settings from "../other/Settings.svelte";
 
     const NUM_OF_RESULTS = 7;
 
+    let settingsEl = null;
     let searchPopupActive = false;
 
     function onSearchChange(e) {
@@ -23,7 +24,19 @@
         setTimeout(() => searchPopupActive = false, 300)
     }
 
-    $: searchResults = $filteredReplaysStore?.slice(0, NUM_OF_RESULTS)?.sort((a,b) => b?.info?.timeSet?.localeCompare(a?.info?.timeSet)) ?? []
+    function onSettingsButtonClick() {
+        if (!settingsEl) return;
+
+        settingsEl.show();
+    }
+
+    function onSettingsDefaultClose(event) {
+        if (event.detail.source === 'overlay') {
+            event.preventDefault();
+        }
+    }
+
+    $: searchResults = $filteredReplaysStore?.slice(0, NUM_OF_RESULTS)?.sort((a, b) => b?.info?.timeSet?.localeCompare(a?.info?.timeSet)) ?? []
 </script>
 
 <nav>
@@ -49,7 +62,7 @@
             <div class="search-dropdown">
                 {#if searchResults.length}
                     {#each searchResults as result(result?.absPath ?? Math.random())}
-                        <Song info={result?.info} on:click={() => nav.go(`/replays/${result?.absPath}`)} />
+                        <Song info={result?.info} on:click={() => nav.go(`/replays/${result?.absPath}`)}/>
                     {/each}
 
                     {#if $filteredReplaysStore?.length > NUM_OF_RESULTS}
@@ -63,13 +76,19 @@
     </section>
 
     <section class="right">
-        <sl-tooltip content="Settings not implemented yet" placement="bottom">
-            <sl-icon-button class="settings" name="gear" label="Settings"></sl-icon-button>
+        <sl-tooltip content="Settings" placement="bottom">
+            <sl-icon-button class="settings-button" name="gear" label="Settings"
+                            on:click={onSettingsButtonClick}></sl-icon-button>
         </sl-tooltip>
-
-        <ThemePicker/>
     </section>
 </nav>
+
+<sl-drawer bind:this={settingsEl} label="Settings"
+           placement="top" class="drawer-placement-top"
+           style:--size="100vh" style:--header-spacing="0.5rem" style:--body-spacing="0.5rem"
+           on:sl-request-close={onSettingsDefaultClose}>
+    <Settings />
+</sl-drawer>
 
 <style>
     nav {
@@ -112,7 +131,7 @@
     }
 
     .search-dropdown {
-        width: min(50rem, calc(100vw - 186px));
+        width: min(50rem, calc(100vw - 124px));
         background-color: var(--color-background);
         border: 1px solid var(--sl-color-neutral-300);
         border-radius: var(--sl-border-radius-large);
@@ -155,7 +174,15 @@
         margin-left: 1rem;
     }
 
-    .settings {
+    .settings-button {
         font-size: 1.25rem;
+    }
+
+    sl-drawer::part(header) {
+        padding-top: 1rem;
+    }
+
+    sl-drawer::part(body) {
+        text-align: left;
     }
 </style>

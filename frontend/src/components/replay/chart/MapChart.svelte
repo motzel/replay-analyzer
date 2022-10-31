@@ -1,7 +1,7 @@
 <script>
     import {tick} from "svelte";
     import Chart from "./Chart.svelte";
-    import theme from '../../../stores/theme.js'
+    import settingsStore from '../../../stores/settings.js'
     import {formatNumber, formatTime} from "../../../utils/format.js";
     import {getPositionIdx, LAYERS_COUNT, LINES_COUNT} from "../grid/utils/position";
     import {gridOrder} from "../grid/utils/direction.js";
@@ -170,7 +170,7 @@
         return val;
     }
 
-    function getAccChartDataFromReplay(replay, filters, chartType) {
+    function getAccChartDataFromReplay(replay, filters, chartType, theme) {
         if (!replay?.notes) return null;
 
         const skipped = (ctx, value) => (ctx.p0.skip || ctx.p1.skip ? value : undefined);
@@ -190,9 +190,9 @@
                 min: p?.time,
                 max: p?.time + (pauseType === 'block' ? p?.duration : 0),
                 color: pauseType === 'block'
-                    ? ($theme === 'dark' ? '#333' : '#eee')
+                    ? (theme === 'dark' ? '#333' : '#eee')
                     : 'gray',
-                labelColor: pauseType === 'block' || $theme === 'dark' ? 'gray' : '#333',
+                labelColor: pauseType === 'block' || theme === 'dark' ? 'gray' : '#333',
                 labelRotate: pauseType === 'marker',
                 label: 'Pause',
                 type: 'vertical',
@@ -385,7 +385,7 @@
                     display: true,
                     position: 'top',
                     labels: {
-                        color: $theme === 'light' ? 'black' : 'white',
+                        color: theme === 'light' ? 'black' : 'white',
                         generateLabels: chartType === 'hit'
                             ? chart => {
 
@@ -422,7 +422,7 @@
                     title: {
                         display: true,
                         text: 'Time',
-                        color: $theme === 'light' ? 'black' : 'white',
+                        color: theme === 'light' ? 'black' : 'white',
                     },
                     ticks: {
                         callback: val => Number.isFinite(val) ? formatTime(val) : null,
@@ -435,7 +435,7 @@
                                 };
                             }
                         },
-                        color: $theme === 'light' ? 'black' : 'white',
+                        color: theme === 'light' ? 'black' : 'white',
                     },
 
                     grid: {
@@ -449,7 +449,7 @@
                     title: {
                         display: true,
                         text: chartType === 'map' ? 'Map Acc' : 'Hit Acc',
-                        color: $theme === 'light' ? 'black' : 'white',
+                        color: theme === 'light' ? 'black' : 'white',
                     },
                     ticks: {
                         callback: val => chartType === 'map'
@@ -459,7 +459,7 @@
                         stepSize: chartType === 'map' ? .5 : 1,
                         includeBounds: chartType !== 'map',
                         precision: chartType === 'map' ? 1 : 0,
-                        color: $theme === 'light' ? 'black' : 'white',
+                        color: theme === 'light' ? 'black' : 'white',
                     },
                     min: minValue,
                     max: chartType === 'map' || maxValue < 115 ? maxValue : 116,
@@ -477,9 +477,11 @@
         if (chartType === 'hit') filters.type = [...new Set([...filters.type, 'hit'])]
     }
 
-    const debouncedGetAccChartDataFromReplay = debounce((replay, filters, chartType) => getAccChartDataFromReplay(replay, filters, chartType), 300)
+    const debouncedGetAccChartDataFromReplay = debounce((replay, filters, chartType, theme) => getAccChartDataFromReplay(replay, filters, chartType, theme), 300)
+
+    $: theme = $settingsStore?.theme ?? 'dark'
     $: if (hand !== filters.hand) filters.hand = hand
-    $:debouncedGetAccChartDataFromReplay(replay, filters, chartType, $theme)
+    $: debouncedGetAccChartDataFromReplay(replay, filters, chartType, theme)
 </script>
 
 <aside>

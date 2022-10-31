@@ -30,6 +30,10 @@
             import('@shoelace-style/shoelace/dist/components/radio-group/radio-group'),
             import('@shoelace-style/shoelace/dist/components/radio-button/radio-button'),
             import('@shoelace-style/shoelace/dist/components/progress-ring/progress-ring'),
+            import('@shoelace-style/shoelace/dist/components/drawer/drawer'),
+            import('@shoelace-style/shoelace/dist/components/tab-group/tab-group'),
+            import('@shoelace-style/shoelace/dist/components/tab-panel/tab-panel'),
+            import('@shoelace-style/shoelace/dist/components/tab/tab'),
             import('@shoelace-style/shoelace/dist/components/relative-time/relative-time'),
             import('@shoelace-style/shoelace/dist/components/format-number/format-number'),
         ])
