@@ -1,6 +1,14 @@
 <script>
     import settingsStore from '../../stores/settings.js'
+    import {objSet} from "../../utils/obj.js";
     import ThemePicker from "../common/ThemePicker.svelte";
+    import StatType from "../replay/StatType.svelte";
+
+    function onSettingChange(e, key) {
+        if (!e?.detail?.length) return;
+
+        $settingsStore = objSet($settingsStore, key, e.detail)
+    }
 </script>
 
 <sl-tab-group>
@@ -24,12 +32,11 @@
                 Not implemented yet
             </sl-tooltip>
         </div>
-
     </sl-tab-panel>
 
     <sl-tab-panel name="stats">
         <label>Default metric</label>
-        <div>TODO</div>
+        <StatType value={$settingsStore?.stats?.metric ?? 'avg'} on:change={e => onSettingChange(e, 'stats.metric')} />
 
         <label>Default chart</label>
         <div>TODO</div>

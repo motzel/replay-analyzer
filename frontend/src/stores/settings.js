@@ -5,6 +5,11 @@ const store = createLocalStorageStore(
     {
         theme: 'dark',
         replaysDirectory: '.\\Replays',
+        stats: {
+            metric: 'avg',
+        },
+        mapChart: {},
+        accChart: {},
     },
     state => {
         // add new fields to the settings

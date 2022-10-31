@@ -1,5 +1,4 @@
 <script>
-    import {router} from 'tinro';
     import replaysStore from '../../stores/replays.js'
     import ReplayHeader from "../replay/ReplayHeader.svelte";
     import SongHeader from "../replay/song/SongHeader.svelte";

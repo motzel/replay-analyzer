@@ -1,10 +1,12 @@
 <script>
     import {createEventDispatcher} from "svelte";
+    import settingsStore from '../../stores/settings.js'
     import Grid from "./Grid.svelte";
     import HandRing from "./HandRing.svelte";
     import Tag from "../common/Tag.svelte";
     import Value from "../common/Value.svelte";
     import Badge from "../common/Badge.svelte";
+    import StatType from "./StatType.svelte";
 
     export let stats
     export let hand = "total"
@@ -12,7 +14,7 @@
 
     const dispatch = createEventDispatcher()
 
-    let statType = "avg"
+    let statType = $settingsStore?.stats?.metric ?? "avg"
 
     function onHandChange(e) {
         hand = e?.target?.value
@@ -24,13 +26,7 @@
 {#if stats}
     <section>
         <header class="stats">
-            <sl-radio-group label="Select a stat type" name={statType} value="avg"
-                            on:sl-change={e => statType = e?.target?.value}>
-                <sl-radio-button size="small" value="min">Min</sl-radio-button>
-                <sl-radio-button size="small" value="avg">Average</sl-radio-button>
-                <sl-radio-button size="small" value="med">Median</sl-radio-button>
-                <sl-radio-button size="small" value="max">Max</sl-radio-button>
-            </sl-radio-group>
+            <StatType bind:value={statType} />
         </header>
 
         <div class="cut stats left">
