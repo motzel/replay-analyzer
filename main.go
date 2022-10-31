@@ -8,6 +8,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"math"
 	"os"
@@ -182,6 +183,10 @@ func main() {
 		LogLevelProduction: logger.INFO,
 		Bind: []interface{}{
 			app,
+		},
+		Windows: &windows.Options{
+			ZoomFactor:           1.0,
+			IsZoomControlEnabled: false,
 		},
 	})
 
