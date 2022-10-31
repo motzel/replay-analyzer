@@ -1,18 +1,18 @@
 <script>
     import nav from "../../stores/nav.js";
     import search from '../../stores/search.js'
+    import filteredReplaysStore from "../../stores/filtered-replays.js";
     import logo from '../../../assets/images/logo.png'
     import ThemePicker from "./ThemePicker.svelte";
     import ArrowIcon from "./ArrowIcon.svelte";
+    import Song from "../replay/song/Song.svelte";
+
+    const NUM_OF_RESULTS = 5;
 
     let searchPopupActive = false;
+
     function onSearchChange(e) {
         search.updateValue(e?.target?.value ?? '')
-
-        if ($search.global) {
-            if (e?.target?.value?.length) searchPopupActive = true
-            else searchPopupActive = false
-        }
     }
 
     function onSearchFocus() {
@@ -20,8 +20,10 @@
     }
 
     function onSearchBlur() {
-        searchPopupActive = false
+        setTimeout(() => searchPopupActive = false, 300)
     }
+
+    $: searchResults = $filteredReplaysStore?.slice(0, NUM_OF_RESULTS)?.sort((a,b) => b?.info?.timeSet?.localeCompare(a?.info?.timeSet)) ?? []
 </script>
 
 <nav>
@@ -36,16 +38,26 @@
     {/if}
 
     <section class="center">
-        <sl-popup placement="bottom-start" active={searchPopupActive}>
+        <sl-popup placement="bottom-start" distance="2" active={searchPopupActive}>
             <span class="input-box" slot="anchor">
                 <sl-input placeholder="Search..." size="medium" pill on:input={onSearchChange} value={$search.value}
-                on:focus={onSearchFocus} on:blur={onSearchBlur}>
+                          on:focus={onSearchFocus} on:blur={onSearchBlur}>
                     <sl-icon name="search" slot="suffix"></sl-icon>
                 </sl-input>
             </span>
 
             <div class="search-dropdown">
-                TODO: global search results
+                {#if searchResults.length}
+                    {#each searchResults as result(result?.absPath ?? Math.random())}
+                        <Song info={result?.info} on:click={() => nav.go(`/replays/${result?.absPath}`)} />
+                    {/each}
+
+                    {#if $filteredReplaysStore?.length > NUM_OF_RESULTS}
+                        <a href="/replays">More replays...</a>
+                    {/if}
+                {:else}
+                    No results.
+                {/if}
             </div>
         </sl-popup>
     </section>
@@ -95,11 +107,40 @@
         max-width: min(50rem, 100%);
     }
 
+    sl-popup::part(popup) {
+        z-index: var(--sl-z-index-dropdown);
+    }
+
     .search-dropdown {
-        width: min(48rem, calc(100vw - 138px - 5rem));
+        width: min(50rem, calc(100vw - 186px));
         background-color: var(--color-background);
-        text-align: center;
-        padding: 1em;
+        border: 1px solid var(--sl-color-neutral-300);
+        border-radius: var(--sl-border-radius-large);
+        text-align: left;
+        overflow: hidden;
+        padding: 1em 0;
+    }
+
+    .search-dropdown :global(> *) {
+        padding: .5rem 1em;
+        cursor: pointer;
+        transition: all 300ms;
+    }
+
+    .search-dropdown :global(> *:hover) {
+        background-color: var(--sl-color-primary-100);
+    }
+
+    .search-dropdown a {
+        display: inline-block;
+        margin-top: .5em;
+        color: var(--sl-color-primary-500);
+        text-decoration: none;
+    }
+
+    .search-dropdown a:hover {
+        font-weight: bold;
+        background-color: transparent;
     }
 
     .right {

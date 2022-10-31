@@ -1,6 +1,7 @@
 <script>
     import Difficulty from "./Difficulty.svelte";
     import Tag from "../../common/Tag.svelte";
+    import Acc from "../Acc.svelte";
 
     export let info
 </script>
@@ -12,11 +13,11 @@
             <Difficulty diff={info?.difficulty} mode={info?.mode} short={true}/>
         </span>
 
-        {#if info?.leftHanded}
-            <span class="left-handed">
-            <Tag variant="red-saber" name="LH" tooltip="Left handed"/>
-            </span>
-        {/if}
+        <span class="acc">
+            <Tag>
+                <Acc value={info?.accuracy} />
+            </Tag>
+        </span>
     </span>
 {/if}
 
@@ -27,20 +28,20 @@
     }
 
     .song-icon > img {
-        width: 4rem;
-        height: 4rem;
+        width: 3.5rem;
+        max-height: 3.5rem;
         border-radius: var(--sl-border-radius-large);
     }
 
     .song-icon > .diff {
         position: absolute;
-        bottom: 0;
-        right: -.5rem;
+        top: -.5rem;
+        left: -.75rem;
     }
 
-    .song-icon > .left-handed {
+    .song-icon > .acc {
         position: absolute;
-        top: -.5rem;
-        right: -.5rem;
+        bottom: .5rem;
+        left: -.75rem;
     }
 </style>
