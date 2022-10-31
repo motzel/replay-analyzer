@@ -23,6 +23,16 @@
 
     export let value = FILTER_TYPES.map(t => t?.items?.length ? `${t?.value}:${t?.itemValue}` : t?.value)
     export let disabled = false
+
+    $: items = FILTER_TYPES?.reduce((carry, item) => {
+        if (item.value === 'pause') {
+            item.itemValue = (value ?? []).find(v => v?.startsWith('pause:'))?.substr(6) ?? 'marker';
+        }
+
+        carry.push(item)
+
+        return carry
+    }, [])
 </script>
 
 <CheckboxGroup items={FILTER_TYPES} bind:value {disabled} on:change />

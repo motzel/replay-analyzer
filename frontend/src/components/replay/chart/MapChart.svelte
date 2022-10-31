@@ -49,7 +49,7 @@
     let tooltipData;
 
     let filters = {
-        type: FILTER_TYPES.map(t => t?.items?.length ? `${t?.value}:${t?.itemValue}` : t?.value),
+        type: $settingsStore?.mapChart?.types ?? FILTER_TYPES.map(t => t?.items?.length ? `${t?.value}:${t?.itemValue}` : t?.value),
         hand: "total",
         score: [0, 115],
         before: [0, 70],
