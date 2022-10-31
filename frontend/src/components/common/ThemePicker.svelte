@@ -21,12 +21,12 @@
 
 <sl-radio-group label="Select a stat type" value={theme}
                 on:sl-change={onThemeChanged}>
-    <sl-radio-button size="small" value="dark" pill>
+    <sl-radio-button size="small" value="dark">
         <sl-icon slot="prefix" name="moon"></sl-icon>
         Dark
     </sl-radio-button>
 
-    <sl-radio-button size="small" value="light" pill>
+    <sl-radio-button size="small" value="light">
         <sl-icon slot="prefix" name="brightness-high"></sl-icon>
         Light
     </sl-radio-button>

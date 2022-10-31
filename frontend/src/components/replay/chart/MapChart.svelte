@@ -14,6 +14,7 @@
     import HitFilterDropdown from "./HitFilterDropdown.svelte";
     import PositionFilterDropdown from "./PositionFilterDropdown.svelte";
     import DirectionFilterDropdown from "./DirectionFilterDropdown.svelte";
+    import ChartType from "../ChartType.svelte";
 
     export let replay
     export let hand = "total"
@@ -23,7 +24,7 @@
     let datasets = null
     let options = null
 
-    let chartType = "map"
+    let chartType = $settingsStore?.stats?.chart ?? "map"
 
     let bucket = [
         {value: 114, label: 'Perfect', color: 'gray'},
@@ -472,7 +473,7 @@
     }
 
     function onChartTypeChange(e) {
-        chartType = e?.target?.value ?? 'map'
+        chartType = e?.detail ?? 'map'
 
         if (chartType === 'hit') filters.type = [...new Set([...filters.type, 'hit'])]
     }
@@ -486,15 +487,7 @@
 
 <aside>
     <div>
-        <sl-radio-group label="Select a chart type" name="chartType" value={chartType}
-                        on:sl-change={onChartTypeChange}>
-            <sl-radio-button size="small" value="map" pill>Map acc</sl-radio-button>
-            <sl-radio-button size="small" value="hit" pill>Hit acc</sl-radio-button>
-        </sl-radio-group>
-    </div>
-
-    <div>
-        <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type} disabled={chartType !== 'map'}/>
+        <ChartType value={chartType} on:change={onChartTypeChange} />
     </div>
 
     <div>
@@ -502,6 +495,12 @@
         <PositionFilterDropdown bind:filters/>
         <DirectionFilterDropdown bind:filters/>
     </div>
+
+    {#if chartType === 'map'}
+        <div>
+            <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type} disabled={chartType !== 'map'}/>
+        </div>
+    {/if}
 </aside>
 
 <Chart {datasets} {options}>

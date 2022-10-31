@@ -3,6 +3,7 @@
     import {objSet} from "../../utils/obj.js";
     import ThemePicker from "../common/ThemePicker.svelte";
     import StatType from "../replay/StatType.svelte";
+    import ChartType from "../replay/ChartType.svelte";
 
     function onSettingChange(e, key) {
         if (!e?.detail?.length) return;
@@ -39,7 +40,7 @@
         <StatType value={$settingsStore?.stats?.metric ?? 'avg'} on:change={e => onSettingChange(e, 'stats.metric')} />
 
         <label>Default chart</label>
-        <div>TODO</div>
+        <ChartType value={$settingsStore?.stats?.chart ?? 'map'} on:change={e => onSettingChange(e, 'stats.chart')} />
     </sl-tab-panel>
 
     <sl-tab-panel name="map-chart">
