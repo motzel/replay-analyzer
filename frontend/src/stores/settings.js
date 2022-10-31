@@ -7,9 +7,11 @@ const store = createLocalStorageStore(
         replaysDirectory: '.\\Replays',
         stats: {
             metric: 'avg',
-            chart: 'map'
+            chart: 'map',
         },
-        mapChart: {},
+        mapChart: {
+            types: undefined,
+        },
         accChart: {},
     },
     state => {

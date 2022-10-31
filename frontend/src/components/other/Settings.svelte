@@ -4,9 +4,14 @@
     import ThemePicker from "../common/ThemePicker.svelte";
     import StatType from "../replay/StatType.svelte";
     import ChartType from "../replay/ChartType.svelte";
+    import FilterTypes from "../replay/chart/FilterTypes.svelte";
 
-    function onSettingChange(e, key) {
-        if (!e?.detail?.length) return;
+    function onSettingChange(e, key, type = 'string') {
+        if (
+            (type === 'string' && !e?.detail?.length) ||
+            (type === 'array' && !Array.isArray(e?.detail))
+        )
+            return;
 
         $settingsStore = objSet($settingsStore, key, e.detail)
     }
@@ -45,7 +50,7 @@
 
     <sl-tab-panel name="map-chart">
         <label>Default types</label>
-        <div>TODO</div>
+        <FilterTypes on:change={e => onSettingChange(e, 'mapChart.types')} />
     </sl-tab-panel>
 
     <sl-tab-panel name="hit-chart">

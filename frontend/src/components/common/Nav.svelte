@@ -32,7 +32,7 @@
 
     function onSettingsDefaultClose(event) {
         if (event.detail.source === 'overlay') {
-            event.preventDefault();
+            event.preventDefault()
         }
     }
 

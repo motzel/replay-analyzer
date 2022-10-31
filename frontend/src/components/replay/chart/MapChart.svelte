@@ -6,11 +6,11 @@
     import {getPositionIdx, LAYERS_COUNT, LINES_COUNT} from "../grid/utils/position";
     import {gridOrder} from "../grid/utils/direction.js";
     import {debounce} from "../../../debounce.js";
+    import FilterTypes, {FILTER_TYPES} from './FilterTypes.svelte'
     import Value from "../../common/Value.svelte";
     import Badge from "../../common/Badge.svelte";
     import Tag from "../../common/Tag.svelte";
     import BlockGrid from "../grid/BlockGrid.svelte";
-    import CheckboxGroup from "../../common/CheckboxGroup.svelte";
     import HitFilterDropdown from "./HitFilterDropdown.svelte";
     import PositionFilterDropdown from "./PositionFilterDropdown.svelte";
     import DirectionFilterDropdown from "./DirectionFilterDropdown.svelte";
@@ -44,24 +44,6 @@
 
         return bucket[bucket.length - 1];
     }
-
-    const FILTER_TYPES = [
-        {value: 'hit', label: 'Hit'},
-        {value: 'miss', label: 'Miss'},
-        {value: 'badCut', label: 'Bad cut'},
-        {value: 'bombHit', label: 'Bomb hit'},
-        {value: 'wallHit', label: 'Wall hit'},
-        {
-            value: 'pause',
-            itemValue: 'marker',
-            label: 'Pause',
-            items: [
-                {value: 'no', label: 'No pauses', notActive: true},
-                {value: 'marker', label: 'Pause markers'},
-                {value: 'block', label: 'Pause blocks'},
-            ]
-        },
-    ]
 
     let tooltipEl;
     let tooltipData;
@@ -498,7 +480,7 @@
 
     {#if chartType === 'map'}
         <div>
-            <CheckboxGroup items={FILTER_TYPES} bind:value={filters.type} disabled={chartType !== 'map'}/>
+            <FilterTypes bind:value={filters.type} disabled={chartType !== 'map'} />
         </div>
     {/if}
 </aside>
