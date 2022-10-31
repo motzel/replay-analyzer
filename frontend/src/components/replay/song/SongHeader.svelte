@@ -32,7 +32,7 @@
                 />
             </div>
 
-            <div class="song">
+            <div class="song-info">
                 <span class="name">
                     <span>{info?.songName}</span>
                     <small class="mapper">{info?.mapper}</small>
@@ -151,7 +151,7 @@
         place-self: center;
     }
 
-    .song {
+    .song-info {
         grid-area: song;
         display: flex;
         flex-direction: column;

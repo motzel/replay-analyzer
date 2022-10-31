@@ -6,11 +6,11 @@
 </script>
 
 {#if info}
-    <section on:click>
+    <section class="song" on:click>
         <SongIcon {info}/>
 
         <div class="replay">
-            <div class="song">
+            <div class="song-info">
                 <span class="name">{info?.songName}</span>
                 <span class="mapper">{info?.mapper}</span>
             </div>
@@ -36,7 +36,7 @@
         flex-direction: column;
     }
 
-    .song {
+    .song-info {
         white-space: nowrap;
         overflow: hidden;
         padding-bottom: .75em;

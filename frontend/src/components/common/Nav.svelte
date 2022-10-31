@@ -56,7 +56,7 @@
                         <a href="/replays">More replays...</a>
                     {/if}
                 {:else}
-                    No results.
+                    <p>No results.</p>
                 {/if}
             </div>
         </sl-popup>
@@ -127,7 +127,7 @@
         transition: all 300ms;
     }
 
-    .search-dropdown :global(> *:hover) {
+    .search-dropdown :global(> .song:hover) {
         background-color: var(--sl-color-primary-100);
     }
 
@@ -141,6 +141,11 @@
     .search-dropdown a:hover {
         font-weight: bold;
         background-color: transparent;
+    }
+
+    .search-dropdown p {
+        text-align: center;
+        cursor: auto;
     }
 
     .right {
