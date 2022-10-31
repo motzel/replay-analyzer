@@ -15,6 +15,7 @@
     import PositionFilterDropdown from "./PositionFilterDropdown.svelte";
     import DirectionFilterDropdown from "./DirectionFilterDropdown.svelte";
     import ChartType from "../ChartType.svelte";
+    import Select from "../../common/Select.svelte";
 
     export let replay
     export let hand = "total"
@@ -26,23 +27,38 @@
 
     let chartType = $settingsStore?.stats?.chart ?? "map"
 
-    let bucket = [
-        {value: 114, label: 'Perfect', color: 'gray'},
-        {value: 112, label: 'Good', color: 'green'},
-        {value: 108, label: 'Ok', color: 'cyan'},
-        {value: 105, label: 'Lame', color: 'violet'},
-        {value: 100, label: 'Bad', color: 'orange'},
-        {value: 0, label: 'WTF', color: 'red'},
-    ].sort((a, b) => b.value - a.value)
+    let buckets = [
+        {
+            label: 'Default',
+            items: [
+                {value: 114, label: 'Perfect', color: 'gray'},
+                {value: 112, label: 'Good', color: 'green'},
+                {value: 108, label: 'Ok', color: 'cyan'},
+                {value: 105, label: 'Lame', color: 'violet'},
+                {value: 100, label: 'Bad', color: 'orange'},
+                {value: 0, label: 'WTF', color: 'red'},
+            ]
+        },
 
-    const getScoreAssessment = score => {
-        if (!bucket.length) return {value: 0, label: '???', color: mainColor};
+        {
+            label: 'Pandita',
+            items: [
+                {value: 115, label: 'Ok', color: 'gray'},
+                {value: 0, label: 'Bad', color: 'red'},
+            ]
+        }
+    ]
 
-        for (const item of bucket) {
+    let bucket = buckets[0]
+
+    const getScoreAssessment = (score, bucket) => {
+        if (!bucket?.items?.length) return {value: 0, label: '???', color: mainColor};
+
+        for (const item of bucket.items) {
             if (score >= item.value) return item;
         }
 
-        return bucket[bucket.length - 1];
+        return bucket.items[bucket.items.length - 1];
     }
 
     let tooltipEl;
@@ -153,8 +169,10 @@
         return val;
     }
 
-    function getAccChartDataFromReplay(replay, filters, chartType, theme) {
+    function getAccChartDataFromReplay(replay, filters, chartType, bucket, theme) {
         if (!replay?.notes) return null;
+
+        bucket.items.sort((a, b) => b.value - a.value)
 
         const skipped = (ctx, value) => (ctx.p0.skip || ctx.p1.skip ? value : undefined);
 
@@ -166,7 +184,7 @@
         let currentPausesIdx = 0
         let totalPauseOffset = 0
 
-        const bucketCount = bucket.map(item => ({...item, count: 0}))
+        const bucketCount = bucket.items.map(item => ({...item, count: 0}))
 
         let pauseRegions = (pauseType !== 'no' ? pauses : [])
             .map(p => ({
@@ -211,7 +229,7 @@
                     currentPausesIdx++
                 }
 
-                const bucketItem = getScoreAssessment(event?.score ?? 0)
+                const bucketItem = getScoreAssessment(event?.score ?? 0, bucket)
 
                 if (shouldBeIncluded) {
                     const bucketCountItem = bucketCount.find(i => i.value === bucketItem.value)
@@ -460,11 +478,11 @@
         if (chartType === 'hit') filters.type = [...new Set([...filters.type, 'hit'])]
     }
 
-    const debouncedGetAccChartDataFromReplay = debounce((replay, filters, chartType, theme) => getAccChartDataFromReplay(replay, filters, chartType, theme), 300)
+    const debouncedGetAccChartDataFromReplay = debounce((replay, filters, chartType, bucket, theme) => getAccChartDataFromReplay(replay, filters, chartType, bucket, theme), 300)
 
     $: theme = $settingsStore?.theme ?? 'dark'
     $: if (hand !== filters.hand) filters.hand = hand
-    $: debouncedGetAccChartDataFromReplay(replay, filters, chartType, theme)
+    $: debouncedGetAccChartDataFromReplay(replay, filters, chartType, bucket, theme)
 </script>
 
 <aside>
@@ -476,6 +494,10 @@
         <HitFilterDropdown bind:filters/>
         <PositionFilterDropdown bind:filters/>
         <DirectionFilterDropdown bind:filters/>
+
+        {#if chartType === 'hit'}
+            <Select items={buckets} bind:value={bucket} variant="neutral" />
+        {/if}
     </div>
 
     {#if chartType === 'map'}

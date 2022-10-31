@@ -12,7 +12,7 @@ const store = createLocalStorageStore(
         mapChart: {
             types: undefined,
         },
-        accChart: {},
+        hitChart: {},
     },
     state => {
         // add new fields to the settings
