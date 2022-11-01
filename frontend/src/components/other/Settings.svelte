@@ -1,19 +1,34 @@
 <script>
-    import settingsStore from '../../stores/settings.js'
+    import settingsStore, {DEFAULT_BUCKETS} from '../../stores/settings.js'
     import {objSet} from "../../utils/obj.js";
     import ThemePicker from "../common/ThemePicker.svelte";
     import StatType from "../replay/StatType.svelte";
     import ChartType from "../replay/ChartType.svelte";
-    import FilterTypes from "../replay/chart/FilterTypes.svelte";
+    import TypesFilter from "../replay/chart/TypesFilter.svelte";
+    import Select from "../common/Select.svelte";
+
+    let buckets = $settingsStore?.hitChart?.buckets?.length
+        ? $settingsStore.hitChart.buckets
+        : DEFAULT_BUCKETS
+
+    let bucket = buckets[Number.isFinite($settingsStore.hitChart?.defaultBucket) ? $settingsStore.hitChart.defaultBucket : 0]
 
     function onSettingChange(e, key, type = 'string') {
         if (
             (type === 'string' && !e?.detail?.length) ||
-            (type === 'array' && !Array.isArray(e?.detail))
+            (type === 'array' && !Array.isArray(e?.detail)) ||
+            (type === 'number' && !Number.isFinite(e?.detail))
         )
             return;
 
         $settingsStore = objSet($settingsStore, key, e.detail)
+    }
+
+    function onDefaultBucketChange(e) {
+        if (!e?.detail) return;
+
+        const idx = buckets?.findIndex(b => b === e.detail)
+        if (idx >= 0) onSettingChange({detail: idx}, 'hitChart.defaultBucket', 'number')
     }
 </script>
 
@@ -66,7 +81,7 @@
             Default types
             <small>Item types displayed by default</small>
         </label>
-        <FilterTypes on:change={e => onSettingChange(e, 'mapChart.types')} />
+        <TypesFilter on:change={e => onSettingChange(e, 'mapChart.types'), 'array'} />
     </sl-tab-panel>
 
     <sl-tab-panel name="hit-chart">
@@ -74,7 +89,8 @@
             Default hit bucket
             <small>Default acc bucket selected</small>
         </label>
-        <div>TODO</div>
+        <Select items={buckets} bind:value={bucket} variant="neutral"
+                on:change={onDefaultBucketChange} />
 
         <label>
             Add custom hit buckets

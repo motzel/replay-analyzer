@@ -1,12 +1,12 @@
 <script>
     import {tick} from "svelte";
     import Chart from "./Chart.svelte";
-    import settingsStore from '../../../stores/settings.js'
+    import settingsStore, {DEFAULT_BUCKETS} from '../../../stores/settings.js'
     import {formatNumber, formatTime} from "../../../utils/format.js";
     import {getPositionIdx, LAYERS_COUNT, LINES_COUNT} from "../grid/utils/position";
     import {gridOrder} from "../grid/utils/direction.js";
     import {debounce} from "../../../debounce.js";
-    import FilterTypes, {FILTER_TYPES} from './FilterTypes.svelte'
+    import TypesFilter, {FILTER_TYPES} from './TypesFilter.svelte'
     import Value from "../../common/Value.svelte";
     import Badge from "../../common/Badge.svelte";
     import Tag from "../../common/Tag.svelte";
@@ -27,29 +27,11 @@
 
     let chartType = $settingsStore?.stats?.chart ?? "map"
 
-    let buckets = [
-        {
-            label: 'Default',
-            items: [
-                {value: 114, label: 'Perfect', color: 'gray'},
-                {value: 112, label: 'Good', color: 'green'},
-                {value: 108, label: 'Ok', color: 'cyan'},
-                {value: 105, label: 'Lame', color: 'violet'},
-                {value: 100, label: 'Bad', color: 'orange'},
-                {value: 0, label: 'WTF', color: 'red'},
-            ]
-        },
+    let buckets = $settingsStore?.hitChart?.buckets?.length
+        ? $settingsStore.hitChart.buckets
+        : DEFAULT_BUCKETS
 
-        {
-            label: 'Pandita',
-            items: [
-                {value: 115, label: 'Ok', color: 'gray'},
-                {value: 0, label: 'Bad', color: 'red'},
-            ]
-        }
-    ]
-
-    let bucket = buckets[0]
+    let bucket = buckets[Number.isFinite($settingsStore.hitChart?.defaultBucket) ? $settingsStore.hitChart.defaultBucket : 0]
 
     const getScoreAssessment = (score, bucket) => {
         if (!bucket?.items?.length) return {value: 0, label: '???', color: mainColor};
@@ -496,13 +478,13 @@
         <DirectionFilterDropdown bind:filters/>
 
         {#if chartType === 'hit'}
-            <Select items={buckets} bind:value={bucket} variant="neutral" />
+            <Select items={buckets} bind:value={bucket} prefix="Grouping: " variant="neutral" />
         {/if}
     </div>
 
     {#if chartType === 'map'}
         <div>
-            <FilterTypes bind:value={filters.type} disabled={chartType !== 'map'} />
+            <TypesFilter bind:value={filters.type} disabled={chartType !== 'map'} />
         </div>
     {/if}
 </aside>

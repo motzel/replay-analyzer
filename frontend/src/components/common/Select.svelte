@@ -6,6 +6,7 @@
     export let variant = 'neutral'
     export let size = 'small'
     export let disabled = false
+    export let prefix = ''
 
     const dispatch =createEventDispatcher()
 
@@ -20,7 +21,7 @@
 
 <sl-dropdown on:sl-select={onDropdownChanged} {disabled}>
     <sl-button class:active={true} {variant} {size} {disabled} slot="trigger" caret>
-        {value?.label ?? value?.value}
+        {prefix}{value?.label ?? value?.value}
     </sl-button>
     <sl-menu>
         {#each items as item (item)}
