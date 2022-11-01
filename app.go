@@ -50,7 +50,7 @@ func (a *App) WatchReplaysDirectory() error {
 	return a.watchDirectory(a.config.ReplaysDir())
 }
 
-func (b *App) beforeClose(ctx context.Context) (prevent bool) {
+func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	return false
 }
 

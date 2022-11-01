@@ -49,5 +49,5 @@ func (l MyLog) Error(message string) {
 }
 
 func (l MyLog) Fatal(message string) {
-	l.Print("[Fatal] " + message)
+	l.Print("[FATAL] " + message)
 }

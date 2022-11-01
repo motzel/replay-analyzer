@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
+	"github.com/mitchellh/panicwrap"
 	"github.com/motzel/go-bsor/bsor"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -21,10 +22,26 @@ import (
 //go:embed frontend/dist
 var assets embed.FS
 
+func createPanicHandler(log *MyLog) func(string) {
+	return func(output string) {
+		log.Fatal(fmt.Sprintf("%v", output))
+		os.Exit(1)
+	}
+}
+
 func main() {
 	log := NewMyLog()
 
 	log.Info("Initializing application")
+
+	exitStatus, panicWrapErr := panicwrap.BasicWrap(createPanicHandler(log))
+	if panicWrapErr != nil {
+		// Something went wrong setting up the panic wrapper. Unlikely, but possible.
+		panic(panicWrapErr)
+	}
+	if exitStatus >= 0 {
+		os.Exit(exitStatus)
+	}
 
 	defaultReplaysDirectory := ".\\Replays"
 
