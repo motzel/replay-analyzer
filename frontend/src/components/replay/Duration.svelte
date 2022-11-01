@@ -3,6 +3,7 @@
     import Tag from "../common/Tag.svelte";
 
     export let duration;
+    export let failed = false;
 
     function format(duration) {
         if (!Number.isFinite(duration)) return null;
@@ -16,11 +17,11 @@
             : null
     }
 
-    $: formatted = format(duration)
+    $: formatted = (failed ? 'Failed at ' : '') + format(duration)
 </script>
 
 {#if formatted?.length}
-    <Tag tooltip="Duration" digits="0">
+    <Tag tooltip={failed ? "Failed at" : "Duration"} digits="0" variant={failed ? 'red-saber' : 'neutral'}>
         {formatted}
     </Tag>
 {/if}

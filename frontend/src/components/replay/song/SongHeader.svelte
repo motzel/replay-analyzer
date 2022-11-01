@@ -49,7 +49,7 @@
                         {/if}
                     </span>
 
-                    <Duration duration={info?.endTime}/>
+                    <Duration duration={info?.endTime} failed={!!info?.failTime}/>
 
                     <HandsBadge label="Notes" tooltip="Number of notes" digits="0"
                                 total={stats?.total?.notes}
