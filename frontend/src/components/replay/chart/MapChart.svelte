@@ -307,7 +307,7 @@
                     return 6;
                 },
                 hoverRadius: ctx => {
-                    if (ctx?.raw?.type === 'hit') return 3;
+                    if (ctx?.raw?.type === 'hit') return 6;
 
                     return 10;
                 },
@@ -360,8 +360,8 @@
             },
             interaction: {
                 intersect: false,
-                mode: 'index',
-                axis: 'xy',
+                mode: 'x',
+                axis: 'x',
             },
             plugins: {
                 legend: {
