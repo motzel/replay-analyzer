@@ -6,7 +6,7 @@ export default {
         const {
             ctx,
             chartArea: {left, top, right, bottom},
-            scales: {xAxis: x, yAxis: y},
+            scales: {x, y},
         } = chart;
         const fullWidth = right - left;
         const fullHeight = bottom - top;

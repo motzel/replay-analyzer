@@ -75,22 +75,31 @@
         }
 
         if (tooltip.body) {
+            const datasetIndexes = [];
+
             tooltipData = {
                 title: (tooltip?.title ?? []),
-                values: (tooltip?.body ?? []).map((v, idx) => {
-                    return {
-                        color: tooltip?.labelTextColor?.[idx] ?? 'white',
-                        backgroundColor: tooltip?.labelColors?.[idx]?.backgroundColor ?? 'gray',
-                        borderColor: tooltip?.labelColors?.[idx]?.borderColor ?? 'gray',
-                        borderWidth: tooltip?.labelColors?.[idx]?.borderWidth ?? 0,
-                        data: tooltip?.dataPoints?.[idx] ?? null,
-                    }
-                })
+                values: (tooltip?.body ?? [])
+                    .map((v, idx) => {
+                        const datasetIndex = tooltip?.dataPoints?.[idx]?.datasetIndex;
+                        if(!Number.isFinite(datasetIndex) || datasetIndexes.includes(datasetIndex)) return null;
+
+                        datasetIndexes.push(datasetIndex);
+
+                        return {
+                            color: tooltip?.labelTextColor?.[idx] ?? 'white',
+                            backgroundColor: tooltip?.labelColors?.[idx]?.backgroundColor ?? 'gray',
+                            borderColor: tooltip?.labelColors?.[idx]?.borderColor ?? 'gray',
+                            borderWidth: tooltip?.labelColors?.[idx]?.borderWidth ?? 0,
+                            data: tooltip?.dataPoints?.[idx] ?? null,
+                        }
+                    })
+                    .filter(v => v)
             }
 
             await tick();
 
-            const chartRect = ctx.chart.canvas.getBoundingClientRect();
+            const chartRect = chart.canvas.getBoundingClientRect();
             const ttRect = tooltipEl.getBoundingClientRect()
 
             let left = chartRect.left + tooltip.caretX + window.scrollX;
@@ -100,7 +109,7 @@
                 left -= (ttRect.width / 2) - (chartRect.right - chartRect.left - tooltip.caretX)
             }
 
-            let top = chartRect.top + tooltip.caretY - ttRect.height - 6;
+            let top = -ttRect.height - 6 + (chart?.scales?.y?.top ?? 0);
             if (window.innerHeight < top) {
                 top = window.innerHeight - 6
             }
@@ -360,7 +369,7 @@
             },
             interaction: {
                 intersect: false,
-                mode: 'x',
+                mode: 'nearest',
                 axis: 'x',
             },
             plugins: {
@@ -397,9 +406,25 @@
                 regions: {
                     regions: pauseRegions,
                 },
+                crosshair: {
+                    line: {
+                        color: '#F66',
+                        width: 1,
+                    },
+                    sync: {
+                        enabled: false
+                    },
+                    zoom: {
+                        enabled: true,
+                        zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',
+                        zoomboxBorderColor: '#48F',
+                        zoomButtonText: 'Reset Zoom',
+                        zoomButtonClass: 'reset-zoom',
+                    },
+                }
             },
             scales: {
-                xAxis: {
+                x: {
                     type: 'linear',
                     display: true,
                     title: {
@@ -425,7 +450,7 @@
                         color: 'rgba(60,60,60,.5)',
                     },
                 },
-                yAxis: {
+                y: {
                     type: 'linear',
                     display: true,
                     position: 'left',
