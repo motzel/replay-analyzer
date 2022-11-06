@@ -5,7 +5,7 @@
     import logo from '../../../assets/images/logo.png'
     import ArrowIcon from "./ArrowIcon.svelte";
     import Song from "../replay/song/Song.svelte";
-    import Settings from "../other/Settings.svelte";
+    import Settings from "../settings/Settings.svelte";
 
     const NUM_OF_RESULTS = 7;
 

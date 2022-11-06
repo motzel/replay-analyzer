@@ -1,7 +1,7 @@
 <script>
     import {tick} from "svelte";
     import Chart from "./Chart.svelte";
-    import settingsStore, {DEFAULT_BUCKETS} from '../../../stores/settings.js'
+    import settingsStore, {DEFAULT_HIT_GROUPS} from '../../../stores/settings.js'
     import {formatNumber, formatTime} from "../../../utils/format.js";
     import {getPositionIdx, LAYERS_COUNT, LINES_COUNT} from "../grid/utils/position";
     import {gridOrder} from "../grid/utils/direction.js";
@@ -27,20 +27,20 @@
 
     let chartType = $settingsStore?.stats?.chart ?? "map"
 
-    let buckets = $settingsStore?.hitChart?.buckets?.length
-        ? $settingsStore.hitChart.buckets
-        : DEFAULT_BUCKETS
+    let hitGroups = $settingsStore?.hitChart?.hitGroups?.length
+        ? $settingsStore.hitChart.hitGroups
+        : DEFAULT_HIT_GROUPS
 
-    let bucket = buckets[Number.isFinite($settingsStore.hitChart?.defaultBucket) ? $settingsStore.hitChart.defaultBucket : 0]
+    let hitGroup = hitGroups[Number.isFinite($settingsStore.hitChart?.defaultHitGroup) ? $settingsStore.hitChart.defaultHitGroup : 0]
 
-    const getScoreAssessment = (score, bucket) => {
-        if (!bucket?.items?.length) return {value: 0, label: '???', color: mainColor};
+    const getScoreAssessment = (score, hitGroup) => {
+        if (!hitGroup?.items?.length) return {value: 0, label: '???', color: mainColor};
 
-        for (const item of bucket.items) {
+        for (const item of hitGroup.items) {
             if (score >= item.value) return item;
         }
 
-        return bucket.items[bucket.items.length - 1];
+        return hitGroup.items[hitGroup.items.length - 1];
     }
 
     let tooltipEl;
@@ -160,10 +160,10 @@
         return val;
     }
 
-    function getAccChartDataFromReplay(replay, filters, chartType, bucket, theme) {
+    function getAccChartDataFromReplay(replay, filters, chartType, hitGroup, theme) {
         if (!replay?.notes) return null;
 
-        bucket.items.sort((a, b) => b.value - a.value)
+        hitGroup.items.sort((a, b) => b.value - a.value)
 
         const skipped = (ctx, value) => (ctx.p0.skip || ctx.p1.skip ? value : undefined);
 
@@ -175,7 +175,7 @@
         let currentPausesIdx = 0
         let totalPauseOffset = 0
 
-        const bucketCount = bucket.items.map(item => ({...item, count: 0}))
+        const hitGroupCount = hitGroup.items.map(item => ({...item, count: 0}))
 
         let pauseRegions = (pauseType !== 'no' ? pauses : [])
             .map(p => ({
@@ -220,11 +220,11 @@
                     currentPausesIdx++
                 }
 
-                const bucketItem = getScoreAssessment(event?.score ?? 0, bucket)
+                const hitGroupItem = getScoreAssessment(event?.score ?? 0, hitGroup)
 
                 if (shouldBeIncluded) {
-                    const bucketCountItem = bucketCount.find(i => i.value === bucketItem.value)
-                    if (bucketCountItem) bucketCountItem.count++;
+                    const hitGroupCountItem = hitGroupCount.find(i => i.value === hitGroupItem.value)
+                    if (hitGroupCountItem) hitGroupCountItem.count++;
                 }
 
                 acc.acc.push({
@@ -232,7 +232,7 @@
                     y: !shouldBeIncluded ? null : (chartType === 'map' ? event.accuracy : event.score),
                     totalPauseOffset,
                     ...event,
-                    bucketItem,
+                    hitGroupItem,
                 })
 
                 acc.fcAcc.push({
@@ -291,7 +291,7 @@
 
                     if (chartType === 'map') return mainColor;
 
-                    return ctx?.raw?.bucketItem?.color ?? mainColor
+                    return ctx?.raw?.hitGroupItem?.color ?? mainColor
                 },
                 borderColor: ctx => {
                     switch (ctx?.raw?.type) {
@@ -306,7 +306,7 @@
 
                     if (chartType === 'map') return mainColor;
 
-                    return ctx?.raw?.bucketItem?.color ?? mainColor
+                    return ctx?.raw?.hitGroupItem?.color ?? mainColor
                 },
                 pointRadius: ctx => {
                     if (chartType === 'hit') return 2;
@@ -381,8 +381,8 @@
                         generateLabels: chartType === 'hit'
                             ? chart => {
 
-                                const sum = bucketCount.reduce((sum, item) => sum + item.count, 0)
-                                return bucketCount
+                                const sum = hitGroupCount.reduce((sum, item) => sum + item.count, 0)
+                                return hitGroupCount
                                     .filter(item => item.count)
                                     .map(item => ({
                                         text: `${item.label ?? ''} x${item.count} / ${sum ? formatNumber(item.count / sum * 100, 2) : 0}%`,
@@ -485,11 +485,20 @@
         if (chartType === 'hit') filters.type = [...new Set([...filters.type, 'hit'])]
     }
 
-    const debouncedGetAccChartDataFromReplay = debounce((replay, filters, chartType, bucket, theme) => getAccChartDataFromReplay(replay, filters, chartType, bucket, theme), 300)
+    function updateHitGroups(hg) {
+        if (!hg?.length) return
 
+        hitGroups = hg
+        hitGroup = hitGroups[Number.isFinite($settingsStore.hitChart?.defaultHitGroup) ? $settingsStore.hitChart.defaultHitGroup : 0]
+    }
+
+    const debouncedGetAccChartDataFromReplay = debounce((replay, filters, chartType, hitGroup, theme) => getAccChartDataFromReplay(replay, filters, chartType, hitGroup, theme), 300)
+
+    $: updateHitGroups($settingsStore?.hitChart?.hitGroups)
     $: theme = $settingsStore?.theme ?? 'dark'
     $: if (hand !== filters.hand) filters.hand = hand
-    $: debouncedGetAccChartDataFromReplay(replay, filters, chartType, bucket, theme)
+
+    $: debouncedGetAccChartDataFromReplay(replay, filters, chartType, hitGroup, theme)
 </script>
 
 <aside>
@@ -503,7 +512,7 @@
         <DirectionFilterDropdown bind:filters/>
 
         {#if chartType === 'hit'}
-            <Select items={buckets} bind:value={bucket} prefix="Grouping: " variant="neutral" />
+            <Select items={hitGroups} bind:value={hitGroup} prefix="Grouping: " variant="neutral" />
         {/if}
     </div>
 

@@ -1,6 +1,6 @@
 import createLocalStorageStore from './local-storage.js'
 
-export const DEFAULT_BUCKETS = [
+export const DEFAULT_HIT_GROUPS = [
     {
         label: 'Default',
         items: [
@@ -35,8 +35,8 @@ const store = createLocalStorageStore(
             types: undefined,
         },
         hitChart: {
-            defaultBucket: 0,
-            buckets: DEFAULT_BUCKETS
+            defaultHitGroup: 0,
+            hitGroups: DEFAULT_HIT_GROUPS
         },
     },
     state => {

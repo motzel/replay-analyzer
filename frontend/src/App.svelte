@@ -17,6 +17,7 @@
     async function initShoelace() {
         return Promise.all([
             import('@shoelace-style/shoelace/dist/components/button/button'),
+            import('@shoelace-style/shoelace/dist/components/icon-button/icon-button'),
             import('@shoelace-style/shoelace/dist/components/input/input'),
             import('@shoelace-style/shoelace/dist/components/icon/icon'),
             import('@shoelace-style/shoelace/dist/components/alert/alert'),
@@ -34,6 +35,7 @@
             import('@shoelace-style/shoelace/dist/components/tab-group/tab-group'),
             import('@shoelace-style/shoelace/dist/components/tab-panel/tab-panel'),
             import('@shoelace-style/shoelace/dist/components/tab/tab'),
+            import('@shoelace-style/shoelace/dist/components/color-picker/color-picker'),
             import('@shoelace-style/shoelace/dist/components/relative-time/relative-time'),
             import('@shoelace-style/shoelace/dist/components/format-number/format-number'),
         ])
