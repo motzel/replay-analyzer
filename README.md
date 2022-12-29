@@ -24,6 +24,7 @@ and copy it to the ``<Beat Saber installation dir>\UserData\BeatLeader``.  If BS
 ## Known bugs
 
 - The map list is not automatically refreshed in the production build when a new replay appears. A restart of the program is required.
+- UI, especially with large window sizes
 - (kinda) If the program is run during a BS session each replay is stored on disk and therefore you can fill it up quickly if you don't have much free space. Currently, the option to automatically delete older replays is not implemented so you have to do it manually (< BS dir >\UserData\BeatLeader\Replays directory).
 
 ## Planned features
@@ -31,7 +32,9 @@ and copy it to the ``<Beat Saber installation dir>\UserData\BeatLeader``.  If BS
 If I can find the time for it at all 😉
 
 - [Beat Leader web replays](https://github.com/BeatLeader/BeatSaber-Web-Replays) integration
-- automatic removal of replays according to preset criteria (e.g., top three, five newest, etc.).
+- the ability to set a directory containing replays so that the program does not have to be installed in a specific location
+- automatic removal of map replays according to preset criteria (e.g., top three, five newest, etc.).
+- grouping and filtering of maps
 - downloading replays of other players from the BL server for analysis
 - BL API integration (?)
 - more stats (everyone loves them, right? ;-)
