@@ -22,6 +22,12 @@ export const DEFAULT_HIT_GROUPS = [
     }
 ]
 
+const DEFAULT_RETENTION = {
+    numOfBest: 3,
+    numOfRecent: 3,
+    separateLimitsForModifiers: true,
+}
+
 const store = createLocalStorageStore(
     'ra-settings',
     {
@@ -38,9 +44,13 @@ const store = createLocalStorageStore(
             defaultHitGroup: 0,
             hitGroups: DEFAULT_HIT_GROUPS
         },
+        retention: DEFAULT_RETENTION
     },
     state => {
-        // add new fields to the settings
+        if (state && !state?.retention) {
+            state.retention = DEFAULT_RETENTION
+        }
+
         return state;
     }
 )

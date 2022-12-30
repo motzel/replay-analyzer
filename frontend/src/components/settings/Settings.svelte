@@ -7,6 +7,8 @@
     import TypesFilter from "../replay/chart/TypesFilter.svelte";
     import Select from "../common/Select.svelte";
     import HitGroupEdit from "./HitGroupEdit.svelte";
+    import NumberEdit from "../common/NumberEdit.svelte";
+    import Checkbox from "../common/Checkbox.svelte";
 
     let hitGroupsTabs = null;
 
@@ -66,6 +68,8 @@
         : DEFAULT_HIT_GROUPS
 
     $: hitGroup = hitGroups[Number.isFinite($settingsStore.hitChart?.defaultHitGroup) ? $settingsStore.hitChart.defaultHitGroup : 0]
+
+    $: console.log($settingsStore)
 </script>
 
 <sl-tab-group>
@@ -73,6 +77,7 @@
     <sl-tab slot="nav" panel="stats">Stats</sl-tab>
     <sl-tab slot="nav" panel="map-chart">Map Acc chart</sl-tab>
     <sl-tab slot="nav" panel="hit-chart">Hit Acc chart</sl-tab>
+    <sl-tab slot="nav" panel="retention">Retention</sl-tab>
 
     <sl-tab-panel name="general">
         <label>
@@ -157,7 +162,36 @@
             </sl-tab-group>
         </div>
     </sl-tab-panel>
+
+    <sl-tab-panel name="retention">
+        <label>
+            Keep
+            <NumberEdit value={$settingsStore?.retention.numOfBest} min={1}
+                        on:input={e => onSettingChange(e, 'retention.numOfBest', 'number')}
+            />
+            the best replay(s)
+            <small>Number of best replays for each map to be stored</small>
+        </label>
+
+        <label>
+            Keep
+            <NumberEdit value={$settingsStore?.retention.numOfRecent} min={1}
+                        on:input={e => onSettingChange(e, 'retention.numOfRecent', 'number')}
+            />
+            recent replay(s)
+            <small>Number of recent replays for each map to be stored</small>
+        </label>
+
+        <label>
+            <Checkbox label="Treat replays with modifiers as separate maps"
+                      checked={$settingsStore?.retention?.separateLimitsForModifiers}
+                      on:change={e => onSettingChange(e, 'retention.separateLimitsForModifiers', 'bool')}
+                      ~/>
+            <small>If checked, maps played with modifiers will have separate limits</small>
+        </label>
+    </sl-tab-panel>
 </sl-tab-group>
+
 
 <style>
     label {
@@ -184,5 +218,11 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    :global(sl-tab-panel[name="retention"] sl-input) {
+        display: inline-block;
+        max-width: 4rem;
+        margin-inline: .25rem;
     }
 </style>

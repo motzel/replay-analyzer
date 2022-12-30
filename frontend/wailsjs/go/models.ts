@@ -676,6 +676,7 @@ export namespace main {
 	    info?: Info;
 	    stats?: Stats;
 	    error?: string;
+	    isRemoved: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new ReplayItem(source);
@@ -689,6 +690,7 @@ export namespace main {
 	        this.info = this.convertValues(source["info"], Info);
 	        this.stats = this.convertValues(source["stats"], Stats);
 	        this.error = source["error"];
+	        this.isRemoved = source["isRemoved"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

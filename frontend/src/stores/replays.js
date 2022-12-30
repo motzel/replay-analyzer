@@ -1,12 +1,14 @@
-import {writable} from "svelte/store"
+import {writable, get} from "svelte/store"
 import {IndexReplays, LoadReplay} from "../../wailsjs/go/main/App.js"
 import {EventsOn} from "../../wailsjs/runtime/runtime.js";
+import settingsStore from './settings'
 
 let store;
 
 store = (() => {
     let replays = null
     let failed = null
+    let removed = null
     let error = null
 
     let progress = null
@@ -14,17 +16,22 @@ store = (() => {
     const {subscribe, set} = writable(replays)
     const {subscribe: errSubscribe, set: errSet} = writable(error)
     const {subscribe: failedSubscribe, set: failedSet} = writable(failed)
+    const {subscribe: removedSubscribe, set: removedSet} = writable(removed)
     const {subscribe: progressSubscribe, set: progressSet} = writable(progress)
 
     const reindex = async () => {
-        IndexReplays()
+        const settings = get(settingsStore);
+
+        IndexReplays(settings?.retention?.numOfBest ?? 3, settings?.retention?.numOfRecent ?? 3, settings?.retention?.separateLimitsForModifiers ?? true)
             .then(data => {
-                replays = (data?.filter(r => !r.error) ?? []).sort((a, b) => b?.info?.timeSet?.localeCompare(a?.info?.timeSet))
+                replays = (data?.filter(r => !r.error && !r.isRemoved) ?? []).sort((a, b) => b?.info?.timeSet?.localeCompare(a?.info?.timeSet))
                 failed = data?.filter(r => r.error) ?? []
+                removed = data?.filter(r => r.isRemoved) ?? []
                 error = null
 
                 set(replays)
                 failedSet(failed)
+                removedSet(removed)
                 errSet(error)
             })
             .catch(err => {
@@ -74,6 +81,7 @@ store = (() => {
         load,
         errorStore: {subscribe: errSubscribe},
         failedStore: {subscribe: failedSubscribe},
+        removedStore: {subscribe: removedSubscribe},
         progressStore: {subscribe: progressSubscribe},
     }
 })()

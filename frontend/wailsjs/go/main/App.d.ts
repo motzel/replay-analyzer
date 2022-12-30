@@ -5,7 +5,7 @@ import {bsor} from '../models';
 
 export function GetCwd():Promise<string>;
 
-export function IndexReplays():Promise<Array<main.ReplayItem>>;
+export function IndexReplays(arg1:number,arg2:number,arg3:boolean):Promise<Array<main.ReplayItem>>;
 
 export function LoadReplay(arg1:string):Promise<bsor.ReplayEventsWithStats>;
 

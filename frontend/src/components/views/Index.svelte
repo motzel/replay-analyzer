@@ -15,11 +15,13 @@
     })
 
     $: failedStore = replaysStore.failedStore
+    $: removedStore = replaysStore.removedStore
     $: errorStore = replaysStore.errorStore
     $: progressStore = replaysStore.progressStore
     $: okCount = $replaysStore?.length ?? 0
     $: failedCount = $failedStore?.length ?? 0
-    $: total = okCount + failedCount
+    $: removedCount = $removedStore?.length ?? 0
+    $: total = okCount + failedCount + removedCount
 </script>
 
 {#if $progressStore}
@@ -33,7 +35,7 @@
 {:else if $replaysStore}
     <h2>All replays indexed</h2>
     <div class="results">
-        Total: {total}, Ok: {okCount}, Failed: {failedCount}
+        Total: {total}, Ok: {okCount}, Failed: {failedCount}, Removed: {removedCount}
     </div>
 
     <sl-button variant="primary" outline pill size="large" on:click={() => router.goto('/replays')}>

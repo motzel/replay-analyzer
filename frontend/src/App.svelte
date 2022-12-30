@@ -19,6 +19,7 @@
             import('@shoelace-style/shoelace/dist/components/button/button'),
             import('@shoelace-style/shoelace/dist/components/icon-button/icon-button'),
             import('@shoelace-style/shoelace/dist/components/input/input'),
+            import('@shoelace-style/shoelace/dist/components/checkbox/checkbox'),
             import('@shoelace-style/shoelace/dist/components/icon/icon'),
             import('@shoelace-style/shoelace/dist/components/alert/alert'),
             import('@shoelace-style/shoelace/dist/components/dropdown/dropdown'),

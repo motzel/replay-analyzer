@@ -116,12 +116,13 @@ func NewInfo(events *bsor.ReplayEventsWithStats) *Info {
 }
 
 type ReplayItem struct {
-	Dir      string  `json:"dir"`
-	Filename string  `json:"filename"`
-	AbsPath  string  `json:"absPath"`
-	Info     *Info   `json:"info"`
-	Stats    *Stats  `json:"stats"`
-	Error    *string `json:"error"`
+	Dir       string  `json:"dir"`
+	Filename  string  `json:"filename"`
+	AbsPath   string  `json:"absPath"`
+	Info      *Info   `json:"info"`
+	Stats     *Stats  `json:"stats"`
+	Error     *string `json:"error"`
+	IsRemoved bool    `json:"isRemoved"`
 }
 
 type IndexProgress struct {
@@ -177,7 +178,7 @@ func RenameBsorFile(dir string, file fs.FileInfo) (string, error) {
 	return newFileName, nil
 }
 
-func (app *App) IndexReplays() ([]ReplayItem, error) {
+func (app *App) IndexReplays(retentionNumOfBest, retentionNumOfRecent int, separateLimitsForModifiers bool) ([]ReplayItem, error) {
 	// TODO: add support for other directories: app.config.OtherDirs() and ReplaysDir()/Download
 	dir := app.config.ReplaysDir()
 
@@ -216,7 +217,7 @@ func (app *App) IndexReplays() ([]ReplayItem, error) {
 		bsorFiles = append(bsorFiles, ReplayItem{Filename: newFileName, Dir: dir, AbsPath: absPath})
 	}
 
-	wails.LogInfof(app.ctx, "%v BSOR files(s) found", len(bsorFiles))
+	wails.LogInfof(app.ctx, "%v BSOR file(s) found", len(bsorFiles))
 
 	progress := IndexProgress{Length: len(bsorFiles), ProcessedFiles: make([]string, 0, len(bsorFiles))}
 	wails.EventsEmit(app.ctx, "indexing", progress)
@@ -271,6 +272,27 @@ func (app *App) IndexReplays() ([]ReplayItem, error) {
 	close(results)
 
 	<-done
+
+	retentionConfig := NewRetentionConfig(retentionNumOfBest, retentionNumOfRecent, separateLimitsForModifiers)
+
+	separateLimitsForModifiersStr := "separate"
+	if separateLimitsForModifiers == false {
+		separateLimitsForModifiersStr = "the same"
+	}
+
+	wails.LogInfof(app.ctx, "Current retention settings: keep %d top replay(s) and %d recent replay(s). Replays with modifiers will be treated as %s map.", retentionConfig.numOfBest, retentionConfig.numOfRecent, separateLimitsForModifiersStr)
+
+	filesToRemove := getFilesToRemove(bsorFiles, retentionConfig)
+	wails.LogInfof(app.ctx, "%d BSOR file(s) to remove", len(filesToRemove))
+
+	for _, path := range filesToRemove {
+		wails.LogInfof(app.ctx, "Removing replay: %s", path)
+
+		err := os.Remove(path)
+		if err != nil {
+			wails.LogErrorf(app.ctx, "Can not remove replay: %v", err)
+		}
+	}
 
 	wails.LogInfo(app.ctx, "Indexing completed")
 
