@@ -9,4 +9,4 @@ export function IndexReplays():Promise<Array<main.ReplayItem>>;
 
 export function LoadReplay(arg1:string):Promise<bsor.ReplayEventsWithStats>;
 
-export function WatchReplaysDirectory():Promise<Error>;
+export function WatchReplaysDirectory():Promise<void>;
